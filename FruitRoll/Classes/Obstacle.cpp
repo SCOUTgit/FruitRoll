@@ -44,15 +44,6 @@ Obstacle::~Obstacle()
 
 }
 
-bool Obstacle::CollideCheck(float x, float y, float size) {
-	float obstacleX = obstacleImage->getPositionX();
-	float obstacleY = obstacleImage->getPositionY();
-	if (obstacleX <= x + size && obstacleX >= x && obstacleY <= y + size && obstacleY >= y)
-		return true;
-
-	return false;
-}
-
 void Obstacle::Move() {
 	auto action = MoveBy::create(1, ccp(-1000, 0));
 	auto rf = RepeatForever::create(action);

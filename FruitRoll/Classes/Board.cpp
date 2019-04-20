@@ -4,7 +4,7 @@
 Board::Board()
 {
 	boardImage = Sprite::create("images/Board.png");
-	boardImage->setPosition(boardImage->getContentSize().width * 1.5, 250);
+	boardImage->setPosition(boardImage->getContentSize().width * 1.5, 200);
 	Move();
 	madeBoard = false;
 }
@@ -29,7 +29,7 @@ void Board::StopEnd() {
 }
 
 bool Board::CheckNeedMake() {
-	if (boardImage->getPosition().x <= boardImage->getContentSize().width / 2 + 28 && !madeBoard) {
+	if (boardImage->getPosition().x <= boardImage->getContentSize().width / 2 + 30 && !madeBoard) {
 		madeBoard = true;
 		return true;
 	}

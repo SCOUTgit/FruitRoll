@@ -22,19 +22,23 @@ bool GameScene::init()
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	backgroundType = "KitchenStage";
-
+	health = 10;
+	score = 0;
 	makeBackground();
 	MakeFruit();
-	MakeBoard();
-	MakeBoard();
-	boardList.front()->boardImage->setPosition(boardList.front()->boardImage->getContentSize().width / 2, 250);
-	boardList.front()->madeBoard = true;
-	
-
 	this->schedule(schedule_selector(GameScene::MakeObject), 3);
-	this->schedule(schedule_selector(GameScene::DeleteObject));
+	this->schedule(schedule_selector(GameScene::Tick));
 
 	return true;
+}
+
+void GameScene::Tick(float f) {
+	DeleteObject();
+	CheckCollide();
+	for (auto board : boardList) {
+		if (board->CheckNeedMake())
+			MakeBoard();
+	}
 }
 
 // 배경 추가
@@ -49,6 +53,11 @@ void GameScene::makeBackground() {
 	backgroundImage->setScale(visibleSize.width / backgroundImage->getContentSize().width, visibleSize.height / backgroundImage->getContentSize().height);
 
 	this->addChild(backgroundImage, 0);
+
+	MakeBoard();
+	MakeBoard();
+	boardList.front()->boardImage->setPosition(boardList.front()->boardImage->getContentSize().width / 2, 200);
+	boardList.front()->madeBoard = true;
 }
 
 // 과일 추가
@@ -89,26 +98,21 @@ void GameScene::MakeObject(float f) {
 
 // 오브젝트 자동삭제
 // 좌표 끝까지 움직였을 때 삭제
-void GameScene::DeleteObject(float f) {
-	if (!obstacleList.empty() && obstacleList.front()->CheckNeedDelete()) {
-		this->removeChild(obstacleList.front()->obstacleImage);
-		delete obstacleList.front();
-		obstacleList.pop_front();
-	}
+void GameScene::DeleteObject() {
 	if (!waterdropList.empty() && waterdropList.front()->CheckNeedDelete()) {
 		this->removeChild(waterdropList.front()->waterdropImage);
 		delete waterdropList.front();
 		waterdropList.pop_front();
 	}
+	if (!obstacleList.empty() && obstacleList.front()->CheckNeedDelete()) {
+		this->removeChild(obstacleList.front()->obstacleImage);
+		delete obstacleList.front();
+		obstacleList.pop_front();
+	}
 	if (!boardList.empty() && boardList.front()->CheckNeedDelete()) {
 		this->removeChild(boardList.front()->boardImage);
 		delete boardList.front();
 		boardList.pop_front();
-	}
-
-	for (auto board : boardList) {
-		if (board->CheckNeedMake())
-			MakeBoard();
 	}
 }
 
@@ -118,4 +122,27 @@ void GameScene::MakeBoard() {
 	Board* board = new Board();
 	this->addChild(board->boardImage, 1);
 	boardList.push_back(board);
+}
+
+// 충돌 체크
+void GameScene::CheckCollide() {
+	auto fruitBoundingbox = fruit->fruitImage->getBoundingBox();
+	for (list<Waterdrop*>::iterator i = waterdropList.begin(); i != waterdropList.end();) {
+		auto waterdropBoundingbox = (*i)->waterdropImage->getBoundingBox();
+		if (fruitBoundingbox.intersectsRect(waterdropBoundingbox)) {
+			score++;
+			this->removeChild((*i)->waterdropImage);
+			delete *i;
+			i = waterdropList.erase(i);
+		}
+		else
+			i++;
+	}
+
+	for (Obstacle* obstacle : obstacleList) {
+		auto obstacleBoundingbox = obstacle->obstacleImage->getBoundingBox();
+		if (fruitBoundingbox.intersectsRect(obstacleBoundingbox)) {
+			health--;
+		}
+	}
 }

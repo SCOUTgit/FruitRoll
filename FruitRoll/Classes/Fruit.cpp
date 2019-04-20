@@ -4,7 +4,6 @@
 Fruit::Fruit(string type)
 {
 	fruitType = type;
-	Health = 100;
 	MakeAnimate();
 }
 
@@ -21,8 +20,8 @@ void Fruit::MakeAnimate() {
 
 	animation->setDelayPerUnit(0.3);
 	
-	animation->addSpriteFrameWithTexture(sprite->getTexture(), Rect(0, 0, sizeX, sizeY));
 	animation->addSpriteFrameWithTexture(sprite->getTexture(), Rect(0, sizeX, sizeX, sizeY));
+	animation->addSpriteFrameWithTexture(sprite->getTexture(), Rect(0, 0, sizeX, sizeY));
 	
 	fruitImage = Sprite::createWithTexture(sprite->getTexture(), Rect(0, 0, sizeX, sizeY));
 	fruitImage->setPosition(200, 300);
@@ -61,6 +60,5 @@ void Fruit::Rotate() {
 }
 
 void Fruit::Collide() {
-	Health -= 10;
 	fruitImage->runAction(fruitAnimate);
 }

@@ -11,7 +11,6 @@ public:
 	~Fruit();
 
 	string fruitType;			// 과일의 종류
-	int Health;					// 체력
 	bool jumping;				// 점프하는 중인지 체크
 	bool stopping;				// 정지하는 중인지 체크
 	Sprite* fruitImage;			// 과일의 이미지

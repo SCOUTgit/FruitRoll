@@ -13,15 +13,6 @@ Waterdrop::~Waterdrop()
 {
 }
 
-bool Waterdrop::CollideCheck(float x, float y, float size) {
-	float waterdropX = waterdropImage->getPositionX();
-	float waterdropY = waterdropImage->getPositionY();
-	if (waterdropX <= x + size && waterdropX >= x && waterdropY <= y + size && waterdropY >= y)
-		return true;
-
-	return false;
-}
-
 void Waterdrop::Move() {
 	auto action = MoveBy::create(1, ccp(-1000, 0));
 	auto rf = RepeatForever::create(action);
