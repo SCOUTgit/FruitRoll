@@ -4,9 +4,8 @@
 Waterdrop::Waterdrop()
 {
 	waterdropImage = Sprite::create("images/Waterdrop.png");
-	waterdropImage->setPosition(1500, 300);
+	waterdropImage->setPosition(1700, 300);
 	waterdropImage->setScale(0.4);
-	needDelete = false;
 	Move();
 }
 
@@ -24,23 +23,24 @@ bool Waterdrop::CollideCheck(float x, float y, float size) {
 }
 
 void Waterdrop::Move() {
-	if (waterdropImage->getPositionX() >= -100) {
-		auto action = MoveBy::create(0.01, ccp(-20, 0));
-		action->setTag(0);
-		auto callback = CallFunc::create(CC_CALLBACK_0(Waterdrop::Move, this));
-		auto seq = Sequence::create(action, callback, NULL);
-		waterdropImage->runAction(seq);
-	}
-	// ¼Ò¸ê
-	else {
-		needDelete = true;
-	}
+	auto action = MoveBy::create(1, ccp(-1000, 0));
+	auto rf = RepeatForever::create(action);
+	rf->setTag(0);
+	waterdropImage->runAction(rf);
 }
+
 void Waterdrop::Stop() {
 	waterdropImage->stopActionByTag(0);
 	stopping = true;
 }
+
 void Waterdrop::StopEnd() {
 	stopping = false;
 	Move();
+}
+
+bool Waterdrop::CheckNeedDelete() {
+	if (waterdropImage->getPosition().x < -waterdropImage->getContentSize().width / 2)
+		return true;
+	return false;
 }

@@ -25,6 +25,12 @@ bool GameScene::init()
 
 	makeBackground();
 	MakeFruit();
+	MakeBoard();
+	MakeBoard();
+	boardList.front()->boardImage->setPosition(boardList.front()->boardImage->getContentSize().width / 2, 250);
+	boardList.front()->madeBoard = true;
+	
+
 	this->schedule(schedule_selector(GameScene::MakeObject), 3);
 	this->schedule(schedule_selector(GameScene::DeleteObject));
 
@@ -58,24 +64,24 @@ void GameScene::MakeObject(float f) {
 	// 랜덤으로 오브젝트의 종류 설정 1. 물방울 2. 움직이는 장애물 3. 떨어지는 장애물
 	srand(time(NULL));
 	int random = rand() % 3;
-	
+
 	Waterdrop* waterdrop;
 	Obstacle* obstacle;
-	
+
 	switch (random) {
 	case 0:
 		waterdrop = new Waterdrop();
-		this->addChild(waterdrop->waterdropImage, 1);
+		this->addChild(waterdrop->waterdropImage, 2);
 		waterdropList.push_back(waterdrop);
 		break;
 	case 1:
 		obstacle = new Obstacle("Fixed");
-		this->addChild(obstacle->obstacleImage, 1);
+		this->addChild(obstacle->obstacleImage, 2);
 		obstacleList.push_back(obstacle);
 		break;
 	case 2:
 		obstacle = new Obstacle("Falling");
-		this->addChild(obstacle->obstacleImage, 1);
+		this->addChild(obstacle->obstacleImage, 2);
 		obstacleList.push_back(obstacle);
 		break;
 	}
@@ -84,14 +90,32 @@ void GameScene::MakeObject(float f) {
 // 오브젝트 자동삭제
 // 좌표 끝까지 움직였을 때 삭제
 void GameScene::DeleteObject(float f) {
-	if (!obstacleList.empty() && obstacleList.front()->needDelete) {
+	if (!obstacleList.empty() && obstacleList.front()->CheckNeedDelete()) {
 		this->removeChild(obstacleList.front()->obstacleImage);
 		delete obstacleList.front();
 		obstacleList.pop_front();
 	}
-	if (!waterdropList.empty() &&waterdropList.front()->needDelete) {
+	if (!waterdropList.empty() && waterdropList.front()->CheckNeedDelete()) {
 		this->removeChild(waterdropList.front()->waterdropImage);
 		delete waterdropList.front();
 		waterdropList.pop_front();
 	}
+	if (!boardList.empty() && boardList.front()->CheckNeedDelete()) {
+		this->removeChild(boardList.front()->boardImage);
+		delete boardList.front();
+		boardList.pop_front();
+	}
+
+	for (auto board : boardList) {
+		if (board->CheckNeedMake())
+			MakeBoard();
+	}
+}
+
+// 나무판자 생성
+// 나무판자 리스트의 첫번째 스프라이트가 0에 접근했을 때 호출
+void GameScene::MakeBoard() {
+	Board* board = new Board();
+	this->addChild(board->boardImage, 1);
+	boardList.push_back(board);
 }

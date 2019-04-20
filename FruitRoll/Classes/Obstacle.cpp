@@ -15,7 +15,7 @@ Obstacle::Obstacle(string type)
 			break;
 		}
 		obstacleImage = Sprite::create("images/" + name + ".png");
-		obstacleImage->setPosition(1500, 300);
+		obstacleImage->setPosition(1700, 350);
 	}
 	else if (type == "Falling") {
 		srand(time(NULL));
@@ -29,10 +29,9 @@ Obstacle::Obstacle(string type)
 			break;
 		}
 		obstacleImage = Sprite::create("images/" + name + ".png");
-		obstacleImage->setPosition(1500, 700);
+		obstacleImage->setPosition(1700, 700);
 	}
 
-	needDelete = false;
 	obstacleImage->setScale(0.7);
 	Move();
 	if (type == "Falling")
@@ -42,6 +41,7 @@ Obstacle::Obstacle(string type)
 
 Obstacle::~Obstacle()
 {
+
 }
 
 bool Obstacle::CollideCheck(float x, float y, float size) {
@@ -54,17 +54,10 @@ bool Obstacle::CollideCheck(float x, float y, float size) {
 }
 
 void Obstacle::Move() {
-	if (obstacleImage->getPositionX() >= -100) {
-		auto action = MoveBy::create(0.01, ccp(-20, 0));
-		action->setTag(0);
-		auto callback = CallFunc::create(CC_CALLBACK_0(Obstacle::Move, this));
-		auto seq = Sequence::create(action, callback, NULL);
-		obstacleImage->runAction(seq);
-	}
-	// ¼Ò¸ê
-	else {
-		needDelete = true;
-	}
+	auto action = MoveBy::create(1, ccp(-1000, 0));
+	auto rf = RepeatForever::create(action);
+	rf->setTag(0);
+	obstacleImage->runAction(rf);
 }
 
 void Obstacle::Stop() {
@@ -78,6 +71,12 @@ void Obstacle::StopEnd() {
 }
 
 void Obstacle::Fall() {
-	auto action = MoveBy::create(1, ccp(0, -400));
+	auto action = MoveBy::create(1, ccp(0, -300));
 	obstacleImage->runAction(action);
+}
+
+bool Obstacle::CheckNeedDelete() {
+	if (obstacleImage->getPosition().x < -obstacleImage->getContentSize().width / 2)
+		return true;
+	return false;
 }

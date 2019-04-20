@@ -3,6 +3,7 @@
 #include "Fruit.h"
 #include "Obstacle.h"
 #include "Waterdrop.h"
+#include "Board.h"
 
 using namespace std;
 USING_NS_CC;
@@ -20,8 +21,9 @@ public:
 	string backgroundType;				// 배경의 종류
 	Sprite* backgroundImage;			// 배경의 이미지
 	Fruit* fruit;						// 과일
-	list<Waterdrop*> waterdropList;	// 물방울 리스트
+	list<Waterdrop*> waterdropList;		// 물방울 리스트
 	list<Obstacle*> obstacleList;		// 장애물 리스트
+	list<Board*> boardList;				// 나무판 리스트
 
 	void makeBackground();				// 배경 생성
 	void MakeFruit();					// 과일 생성
@@ -29,6 +31,8 @@ public:
 	void DeleteObject(float f);			// 오브젝트 삭제
 	void PrintInfo();					// 정보 출력
 	void RunAudio();					// 오디오 실행
+	void MakeBoard();					// 나무판 생성
+
 
 	// implement the "static create()" method manually
 	CREATE_FUNC(GameScene);
