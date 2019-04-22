@@ -14,13 +14,13 @@ public:
 	bool jumping;				// 점프하는 중인지 체크
 	bool stopping;				// 정지하는 중인지 체크
 	Sprite* fruitImage;			// 과일의 이미지
-	Animate* fruitAnimate;		// 과일의 애니메이트
+	Animation* fruitAnimation;	// 과일애니메이션
 
-	void MakeAnimate();			// 애니메이트 생성
+	void MakeSprite();			// 애니메이트 생성
 	void Jump();				// 점프하기
 	void JumpEnd();				// 점프 끝내기
 	void Stop();				// 정지하기
 	void StopEnd();				// 정지 끝내기
 	void Rotate();				// 구르기
-	void Collide();				// 충돌 시 애니메이션 실행
+	void PlayAnimation();				// 충돌 시 애니메이션 실행
 };

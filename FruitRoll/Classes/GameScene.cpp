@@ -24,11 +24,12 @@ bool GameScene::init()
 	backgroundType = "KitchenStage";
 	health = 10;
 	score = 0;
-	makeBackground();
 	MakeFruit();
+	makeBackground();
 	this->schedule(schedule_selector(GameScene::MakeObject), 3);
 	this->schedule(schedule_selector(GameScene::Tick));
-
+	SimpleAudioEngine::sharedEngine()->playBackgroundMusic("sounds/bgm.wav", true);
+	
 	return true;
 }
 
@@ -65,7 +66,6 @@ void GameScene::MakeFruit() {
 	fruit = new Fruit("Apple");
 	this->addChild(fruit->fruitImage, 10);
 	fruit->Rotate();
-	fruit->Jump();
 }
 
 // 오브젝트(장애물, 물방울) 자동생성
@@ -130,6 +130,7 @@ void GameScene::CheckCollide() {
 	for (list<Waterdrop*>::iterator i = waterdropList.begin(); i != waterdropList.end();) {
 		auto waterdropBoundingbox = (*i)->waterdropImage->getBoundingBox();
 		if (fruitBoundingbox.intersectsRect(waterdropBoundingbox)) {
+			SimpleAudioEngine::sharedEngine()->playEffect("sounds/waterdrop.wav");
 			score++;
 			this->removeChild((*i)->waterdropImage);
 			delete *i;
@@ -143,6 +144,7 @@ void GameScene::CheckCollide() {
 		auto obstacleBoundingbox = obstacle->obstacleImage->getBoundingBox();
 		if (fruitBoundingbox.intersectsRect(obstacleBoundingbox)) {
 			health--;
+			fruit->PlayAnimation();
 		}
 	}
 }

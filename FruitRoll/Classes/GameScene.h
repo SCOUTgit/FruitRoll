@@ -4,8 +4,10 @@
 #include "Obstacle.h"
 #include "Waterdrop.h"
 #include "Board.h"
+#include "SimpleAudioEngine.h"
 
 using namespace std;
+using namespace CocosDenshion;
 USING_NS_CC;
 
 class GameScene : public Layer
