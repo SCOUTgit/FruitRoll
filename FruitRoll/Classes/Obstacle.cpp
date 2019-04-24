@@ -1,47 +1,14 @@
 #include "Obstacle.h"
 
-Obstacle::Obstacle(string type)
+Obstacle::Obstacle(string name)
 {
-	string name;
-	if (type == "Fixed") {
-		srand(time(NULL));
-		int random = rand() % 2;
-		switch (random) {
-		case 0:
-			name = "Bottle";
-			break;
-		case 1:
-			name = "Coke";
-			break;
-		}
-		obstacleImage = Sprite::create("images/" + name + ".png");
-		obstacleImage->setPosition(1700, 350);
-	}
-	else if (type == "Falling") {
-		srand(time(NULL));
-		int random = rand() % 2;
-		switch (random) {
-		case 0:
-			name = "Knife";
-			break;
-		case 1:
-			name = "Fork";
-			break;
-		}
-		obstacleImage = Sprite::create("images/" + name + ".png");
-		obstacleImage->setPosition(1700, 700);
-	}
-
-	obstacleImage->setScale(0.7);
-	Move();
-	if (type == "Falling")
-		Fall();
+	obstacleImage = Sprite::create("images/" + name + ".png");
+	Remove(name);
 }
 
 
 Obstacle::~Obstacle()
 {
-
 }
 
 void Obstacle::Move() {
@@ -49,6 +16,15 @@ void Obstacle::Move() {
 	auto rf = RepeatForever::create(action);
 	rf->setTag(0);
 	obstacleImage->runAction(rf);
+}
+
+void Obstacle::Remove(string name) {
+	if (name == "Coke" || name == "Bottle") {
+		obstacleImage->setPosition(1700, 200 + obstacleImage->getContentSize().height / 2);
+	}
+	if (name == "Knife" || name == "Fork") {
+		obstacleImage->setPosition(1700, 700);
+	}
 }
 
 void Obstacle::Stop() {

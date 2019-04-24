@@ -4,9 +4,8 @@
 Waterdrop::Waterdrop()
 {
 	waterdropImage = Sprite::create("images/Waterdrop.png");
-	waterdropImage->setPosition(1700, 300);
+	Remove();
 	waterdropImage->setScale(0.4);
-	Move();
 }
 
 Waterdrop::~Waterdrop()
@@ -18,6 +17,10 @@ void Waterdrop::Move() {
 	auto rf = RepeatForever::create(action);
 	rf->setTag(0);
 	waterdropImage->runAction(rf);
+}
+
+void Waterdrop::Remove() {
+	waterdropImage->setPosition(1700, 300);
 }
 
 void Waterdrop::Stop() {

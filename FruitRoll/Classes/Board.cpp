@@ -4,9 +4,8 @@
 Board::Board()
 {
 	boardImage = Sprite::create("images/Board.png");
-	boardImage->setPosition(boardImage->getContentSize().width * 1.5, 200);
+	Remove();
 	Move();
-	madeBoard = false;
 }
 
 Board::~Board()
@@ -19,21 +18,19 @@ void Board::Move() {
 	rf->setTag(0);
 	boardImage->runAction(rf);
 }
+
+void Board::Remove() {
+	boardImage->setPosition(boardImage->getContentSize().width * 1.5, 200);
+}
+
 void Board::Stop() {
 	boardImage->stopActionByTag(0);
 	stopping = true;
 }
+
 void Board::StopEnd() {
 	stopping = false;
 	Move();
-}
-
-bool Board::CheckNeedMake() {
-	if (boardImage->getPosition().x <= boardImage->getContentSize().width / 2 + 30 && !madeBoard) {
-		madeBoard = true;
-		return true;
-	}
-	return false;
 }
 
 bool Board::CheckNeedDelete() {

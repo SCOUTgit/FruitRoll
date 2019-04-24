@@ -24,27 +24,25 @@ bool GameScene::init()
 	backgroundType = "KitchenStage";
 	health = 10;
 	score = 0;
+
 	MakeFruit();
 	makeBackground();
-	this->schedule(schedule_selector(GameScene::MakeObject), 3);
+	MakeObject();
+	MoveObject();
+
 	this->schedule(schedule_selector(GameScene::Tick));
 	SimpleAudioEngine::sharedEngine()->playBackgroundMusic("sounds/bgm.wav", true);
-	
+
 	return true;
 }
 
 void GameScene::Tick(float f) {
 	DeleteObject();
 	CheckCollide();
-	for (auto board : boardList) {
-		if (board->CheckNeedMake())
-			MakeBoard();
-	}
 }
 
 // 배경 추가
 void GameScene::makeBackground() {
-
 	// sceneType 정하기
 	backgroundImage = Sprite::create("images\\" + backgroundType + ".png");
 	backgroundImage->setAnchorPoint(Point::ZERO);
@@ -54,44 +52,56 @@ void GameScene::makeBackground() {
 	backgroundImage->setScale(visibleSize.width / backgroundImage->getContentSize().width, visibleSize.height / backgroundImage->getContentSize().height);
 
 	this->addChild(backgroundImage, 0);
-
-	MakeBoard();
-	MakeBoard();
-	boardList.front()->boardImage->setPosition(boardList.front()->boardImage->getContentSize().width / 2, 200);
-	boardList.front()->madeBoard = true;
 }
 
-// 과일 추가
+// 과일 생성
 void GameScene::MakeFruit() {
 	fruit = new Fruit("Apple");
 	this->addChild(fruit->fruitImage, 10);
 	fruit->Rotate();
 }
 
-// 오브젝트(장애물, 물방울) 자동생성
-void GameScene::MakeObject(float f) {
-	// 랜덤으로 오브젝트의 종류 설정 1. 물방울 2. 움직이는 장애물 3. 떨어지는 장애물
+// 오브젝트(장애물, 물방울) 생성
+void GameScene::MakeObject() {
+	waterdrop = new Waterdrop();
+	this->addChild(waterdrop->waterdropImage, 5);
+	obstacleMap.insert(make_pair("Bottle", new Obstacle("Bottle")));
+	obstacleMap.insert(make_pair("Coke", new Obstacle("Coke")));
+	obstacleMap.insert(make_pair("Fork", new Obstacle("Fork")));
+	obstacleMap.insert(make_pair("Knife", new Obstacle("Knife")));
+	this->addChild(obstacleMap["Bottle"]->obstacleImage, 5);
+	this->addChild(obstacleMap["Coke"]->obstacleImage, 5);
+	this->addChild(obstacleMap["Fork"]->obstacleImage, 5);
+	this->addChild(obstacleMap["Knife"]->obstacleImage, 5);
+
+	board1 = new Board();
+	this->addChild(board1->boardImage, 1);
+	board1->boardImage->setPosition(board1->boardImage->getContentSize().width / 2, 200);
+	board2 = new Board();
+	this->addChild(board2->boardImage, 1);
+}
+
+void GameScene::MoveObject() {
 	srand(time(NULL));
-	int random = rand() % 3;
-
-	Waterdrop* waterdrop;
-	Obstacle* obstacle;
-
-	switch (random) {
+	int r = rand() % 5;
+	switch (r)
+	{
 	case 0:
-		waterdrop = new Waterdrop();
-		this->addChild(waterdrop->waterdropImage, 2);
-		waterdropList.push_back(waterdrop);
+		waterdrop->StopEnd();
 		break;
 	case 1:
-		obstacle = new Obstacle("Fixed");
-		this->addChild(obstacle->obstacleImage, 2);
-		obstacleList.push_back(obstacle);
+		obstacleMap["Bottle"]->StopEnd();
 		break;
 	case 2:
-		obstacle = new Obstacle("Falling");
-		this->addChild(obstacle->obstacleImage, 2);
-		obstacleList.push_back(obstacle);
+		obstacleMap["Coke"]->StopEnd();
+		break;
+	case 3:
+		obstacleMap["Fork"]->StopEnd();
+		break;
+	case 4:
+		obstacleMap["Knife"]->StopEnd();
+		break;
+	default:
 		break;
 	}
 }
@@ -99,52 +109,47 @@ void GameScene::MakeObject(float f) {
 // 오브젝트 자동삭제
 // 좌표 끝까지 움직였을 때 삭제
 void GameScene::DeleteObject() {
-	if (!waterdropList.empty() && waterdropList.front()->CheckNeedDelete()) {
-		this->removeChild(waterdropList.front()->waterdropImage);
-		delete waterdropList.front();
-		waterdropList.pop_front();
+	if (waterdrop->CheckNeedDelete()) {
+		waterdrop->Stop();
+		waterdrop->Remove();
+		MoveObject();
 	}
-	if (!obstacleList.empty() && obstacleList.front()->CheckNeedDelete()) {
-		this->removeChild(obstacleList.front()->obstacleImage);
-		delete obstacleList.front();
-		obstacleList.pop_front();
+	for (pair<string, Obstacle*> obstacle : obstacleMap) {
+		if (obstacle.second->CheckNeedDelete()) {
+			obstacle.second->Stop();
+			obstacle.second->Remove(obstacle.first);
+			MoveObject();
+		}
 	}
-	if (!boardList.empty() && boardList.front()->CheckNeedDelete()) {
-		this->removeChild(boardList.front()->boardImage);
-		delete boardList.front();
-		boardList.pop_front();
+	if (board1->CheckNeedDelete()) {
+		board1->Remove();
 	}
-}
-
-// 나무판자 생성
-// 나무판자 리스트의 첫번째 스프라이트가 0에 접근했을 때 호출
-void GameScene::MakeBoard() {
-	Board* board = new Board();
-	this->addChild(board->boardImage, 1);
-	boardList.push_back(board);
+	if (board2->CheckNeedDelete()) {
+		board2->Remove();
+	}
 }
 
 // 충돌 체크
 void GameScene::CheckCollide() {
-	auto fruitBoundingbox = fruit->fruitImage->getBoundingBox();
-	for (list<Waterdrop*>::iterator i = waterdropList.begin(); i != waterdropList.end();) {
-		auto waterdropBoundingbox = (*i)->waterdropImage->getBoundingBox();
-		if (fruitBoundingbox.intersectsRect(waterdropBoundingbox)) {
-			SimpleAudioEngine::sharedEngine()->playEffect("sounds/waterdrop.wav");
-			score++;
-			this->removeChild((*i)->waterdropImage);
-			delete *i;
-			i = waterdropList.erase(i);
-		}
-		else
-			i++;
+	auto waterdropBoundingbox = waterdrop->waterdropImage->getBoundingBox();
+	if (waterdropBoundingbox.intersectsCircle(fruit->fruitImage->getPosition(), fruit->fruitRadius)) {
+		SimpleAudioEngine::sharedEngine()->playEffect("sounds/waterdrop.wav");
+		waterdrop->Remove();
+		waterdrop->Stop();
+		MoveObject();
+		score++;
 	}
 
-	for (Obstacle* obstacle : obstacleList) {
-		auto obstacleBoundingbox = obstacle->obstacleImage->getBoundingBox();
-		if (fruitBoundingbox.intersectsRect(obstacleBoundingbox)) {
+	for (pair<string, Obstacle*> obstacle : obstacleMap) {
+		auto obstacleBoundingbox = obstacle.second->obstacleImage->getBoundingBox();
+
+		if (obstacleBoundingbox.intersectsCircle(fruit->fruitImage->getPosition(), fruit->fruitRadius) && !collided) {
 			health--;
 			fruit->PlayAnimation();
+			collided = true;
+		}
+		if (!obstacleBoundingbox.intersectsCircle(fruit->fruitImage->getPosition(), fruit->fruitRadius) && collided) {
+			collided = false;
 		}
 	}
 }

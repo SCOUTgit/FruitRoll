@@ -10,9 +10,10 @@ public:
 	Fruit(string type);
 	~Fruit();
 
-	string fruitType;			// 과일의 종류
 	bool jumping;				// 점프하는 중인지 체크
 	bool stopping;				// 정지하는 중인지 체크
+	float fruitRadius;			// 과일의 반지름
+	string fruitType;			// 과일의 종류
 	Sprite* fruitImage;			// 과일의 이미지
 	Animation* fruitAnimation;	// 과일애니메이션
 

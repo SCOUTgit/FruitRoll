@@ -16,6 +16,7 @@ public:
 
 	void Stop();											// 정지하기
 	void StopEnd();											// 정지 끝내기
+	void Remove(string name);								// 스폰장소로 이동하기
 	void Move();											// 앞으로 움직이기
 	void Fall();											// 떨어지는 장애물일 경우 떨어지기
 	bool CheckNeedDelete();									// 삭제해야하는지 확인

@@ -33,6 +33,7 @@ void Fruit::MakeSprite() {
 	fruitImage = Sprite::createWithTexture(fruitSprite->getTexture(), Rect(0, 0, sizeX, sizeY));
 	fruitImage->setPosition(200, 300);
 	fruitImage->setScale(0.4);
+	fruitRadius = fruitImage->getBoundingBox().getMinX() / 2;
 }
 
 void Fruit::Jump() {
@@ -68,5 +69,9 @@ void Fruit::Rotate() {
 
 void Fruit::PlayAnimation() {
 	auto fruitAnimate = Animate::create(fruitAnimation);
+	auto fadeIn = FadeTo::create(0.25, 155);
+	auto fadeOut = FadeTo::create(0.25, 255);
 	fruitImage->runAction(fruitAnimate);
+	auto seq = Sequence::create(fadeIn, fadeOut, fadeIn, fadeOut, NULL);
+	fruitImage->runAction(seq);
 }

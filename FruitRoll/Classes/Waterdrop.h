@@ -13,6 +13,7 @@ public:
 	Sprite* waterdropImage;									// 물방울 이미지
 	bool stopping;											// 정지하는 중인지 체크
 
+	void Remove();											// 스폰장소로 이동하기
 	void Move();											// 앞으로 움직이기
 	void Stop();											// 정지하기
 	void StopEnd();											// 정지 끝내기
