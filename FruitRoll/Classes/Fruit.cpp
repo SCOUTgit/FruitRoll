@@ -30,15 +30,23 @@ void Fruit::MakeSprite() {
 
 	fruitAnimation->retain();
 
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	
 	fruitImage = Sprite::createWithTexture(fruitSprite->getTexture(), Rect(0, 0, sizeX, sizeY));
-	fruitImage->setPosition(200, 300);
-	fruitImage->setScale(0.4);
-	fruitRadius = fruitImage->getBoundingBox().getMinX() / 2;
+	fruitImage->setPosition(visibleSize.width / 8, visibleSize.height / 3);
+	
+	auto scale = visibleSize.width / 6400;
+
+	fruitImage->setScale(scale);
+	width = fruitImage->getContentSize().width * scale;
+	height = fruitImage->getContentSize().height * scale;
+	
+	fruitRadius = width / 2;
 }
 
 void Fruit::Jump() {
 	jumping = true;
-	auto jumpAction = JumpTo::create(1, fruitImage->getPosition(), 400, 1);
+	auto jumpAction = JumpTo::create(1, fruitImage->getPosition(), height * 3, 1);
 	auto callback = CallFunc::create(CC_CALLBACK_0(Fruit::JumpEnd, this));
 	auto seq = Sequence::create(jumpAction, callback, NULL);
 	fruitImage->runAction(seq);

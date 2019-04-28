@@ -3,7 +3,7 @@
 Scene* GameScene::createScene() {
 	auto scene = Scene::create();
 	auto layer = GameScene::create();
-
+	
 	scene->addChild(layer);
 	return scene;
 }
@@ -26,9 +26,11 @@ bool GameScene::init()
 	score = 0;
 
 	MakeFruit();
-	makeBackground();
+	MakeBackground();
 	MakeObject();
+	MakeUI();
 	MoveObject();
+
 
 	this->schedule(schedule_selector(GameScene::Tick));
 	SimpleAudioEngine::sharedEngine()->playBackgroundMusic("sounds/bgm.wav", true);
@@ -41,8 +43,70 @@ void GameScene::Tick(float f) {
 	CheckCollide();
 }
 
+
+void GameScene::onEnter() {
+	Layer::onEnter();
+	auto listener = EventListenerTouchOneByOne::create();
+	listener->setSwallowTouches(true);
+	listener->onTouchBegan = CC_CALLBACK_2(GameScene::onTouchBegan, this);
+	listener->onTouchMoved = CC_CALLBACK_2(GameScene::onTouchMoved, this);
+	listener->onTouchEnded = CC_CALLBACK_2(GameScene::onTouchEnded, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+}
+
+void GameScene::onExit() {
+	_eventDispatcher->removeAllEventListeners();
+	Layer::onExit();
+}
+
+
+void GameScene::Jump() {
+	if(!fruit->jumping)
+		fruit->Jump();
+}
+
+bool GameScene::onTouchBegan(Touch* touch, Event* unused_event) {
+	auto touchPoint = touch->getLocation();
+	
+	if (UI->jumpButton->getBoundingBox().containsPoint(touchPoint) && !fruit->jumping) {
+		fruit->Jump();
+	}
+
+	else if (UI->stopButton->getBoundingBox().containsPoint(touchPoint) && !fruit->jumping) {
+		fruit->Stop();
+		board1->Stop();
+		board2->Stop();
+		waterdrop->Stop();
+		for (pair<string,Obstacle*> o : obstacleMap) {
+			o.second->Stop();
+		}
+	}
+
+	return true;
+}
+
+void GameScene::onTouchMoved(Touch* touch, Event* unused_event) {
+	auto touchPoint = touch->getLocation();
+
+}
+
+void GameScene::onTouchEnded(Touch* touch, Event *unused_event) {
+	auto touchPoint = touch->getLocation();
+	if (board1->stopping) {
+		fruit->StopEnd();
+		board1->StopEnd();
+		board2->StopEnd();
+		if (waterdrop->moving)
+			waterdrop->StopEnd();
+		for (pair<string, Obstacle*> o : obstacleMap) {
+			if(o.second->moving)
+				o.second->StopEnd();
+		}
+	}
+}
+
 // 배경 추가
-void GameScene::makeBackground() {
+void GameScene::MakeBackground() {
 	// sceneType 정하기
 	backgroundImage = Sprite::create("images\\" + backgroundType + ".png");
 	backgroundImage->setAnchorPoint(Point::ZERO);
@@ -52,6 +116,13 @@ void GameScene::makeBackground() {
 	backgroundImage->setScale(visibleSize.width / backgroundImage->getContentSize().width, visibleSize.height / backgroundImage->getContentSize().height);
 
 	this->addChild(backgroundImage, 0);
+}
+
+void GameScene::MakeUI() {
+	UI = new GameSceneUI();
+	this->addChild(UI->jumpButton, 100);
+	this->addChild(UI->stopButton, 100);
+	this->addChild(UI->pauseButton, 100);
 }
 
 // 과일 생성
@@ -76,7 +147,8 @@ void GameScene::MakeObject() {
 
 	board1 = new Board();
 	this->addChild(board1->boardImage, 1);
-	board1->boardImage->setPosition(board1->boardImage->getContentSize().width / 2, 200);
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	board1->boardImage->setPosition(board1->width / 2, board1->height * 1.5);
 	board2 = new Board();
 	this->addChild(board2->boardImage, 1);
 }
@@ -97,9 +169,11 @@ void GameScene::MoveObject() {
 		break;
 	case 3:
 		obstacleMap["Fork"]->StopEnd();
+		obstacleMap["Fork"]->Fall();
 		break;
 	case 4:
 		obstacleMap["Knife"]->StopEnd();
+		obstacleMap["Knife"]->Fall();
 		break;
 	default:
 		break;
@@ -117,7 +191,7 @@ void GameScene::DeleteObject() {
 	for (pair<string, Obstacle*> obstacle : obstacleMap) {
 		if (obstacle.second->CheckNeedDelete()) {
 			obstacle.second->Stop();
-			obstacle.second->Remove(obstacle.first);
+			obstacle.second->Remove();
 			MoveObject();
 		}
 	}

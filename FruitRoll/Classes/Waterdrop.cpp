@@ -4,8 +4,12 @@
 Waterdrop::Waterdrop()
 {
 	waterdropImage = Sprite::create("images/Waterdrop.png");
+	visibleSize = Director::getInstance()->getVisibleSize();
+	auto scale = visibleSize.width / 6400;
+	waterdropImage->setScale(scale);
+	width = waterdropImage->getContentSize().width * scale;
+	height = waterdropImage->getContentSize().height * scale;
 	Remove();
-	waterdropImage->setScale(0.4);
 }
 
 Waterdrop::~Waterdrop()
@@ -13,14 +17,16 @@ Waterdrop::~Waterdrop()
 }
 
 void Waterdrop::Move() {
-	auto action = MoveBy::create(1, ccp(-1000, 0));
+	auto action = MoveBy::create(1, ccp(-visibleSize.width / 1.6, 0));
 	auto rf = RepeatForever::create(action);
 	rf->setTag(0);
 	waterdropImage->runAction(rf);
+	moving = true;
 }
 
 void Waterdrop::Remove() {
-	waterdropImage->setPosition(1700, 300);
+	waterdropImage->setPosition(visibleSize.width + width, visibleSize.height * 0.3);
+	moving = false;
 }
 
 void Waterdrop::Stop() {
@@ -34,7 +40,7 @@ void Waterdrop::StopEnd() {
 }
 
 bool Waterdrop::CheckNeedDelete() {
-	if (waterdropImage->getPosition().x < -waterdropImage->getContentSize().width / 2)
+	if (waterdropImage->getPosition().x < -width / 2)
 		return true;
 	return false;
 }

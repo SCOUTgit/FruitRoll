@@ -2,8 +2,14 @@
 
 Obstacle::Obstacle(string name)
 {
+	this->name = name;
 	obstacleImage = Sprite::create("images/" + name + ".png");
-	Remove(name);
+	visibleSize = Director::getInstance()->getVisibleSize();
+	auto scale = visibleSize.width / 2400;
+	obstacleImage->setScale(scale);
+	width = obstacleImage->getContentSize().width * scale;
+	height = obstacleImage->getContentSize().height * scale;
+	Remove();
 }
 
 
@@ -12,19 +18,21 @@ Obstacle::~Obstacle()
 }
 
 void Obstacle::Move() {
-	auto action = MoveBy::create(1, ccp(-1000, 0));
+	moving = true;
+	auto action = MoveBy::create(1, ccp(-visibleSize.width / 1.6, 0));
 	auto rf = RepeatForever::create(action);
 	rf->setTag(0);
 	obstacleImage->runAction(rf);
 }
 
-void Obstacle::Remove(string name) {
+void Obstacle::Remove() {
 	if (name == "Coke" || name == "Bottle") {
-		obstacleImage->setPosition(1700, 200 + obstacleImage->getContentSize().height / 2);
+		obstacleImage->setPosition(visibleSize.width + width, visibleSize.height * 0.2 + height / 2);
 	}
 	if (name == "Knife" || name == "Fork") {
-		obstacleImage->setPosition(1700, 700);
+		obstacleImage->setPosition(visibleSize.width + width, visibleSize.height * 0.8);
 	}
+	moving = false;
 }
 
 void Obstacle::Stop() {
@@ -35,15 +43,17 @@ void Obstacle::Stop() {
 void Obstacle::StopEnd() {
 	stopping = false;
 	Move();
+	
 }
 
 void Obstacle::Fall() {
-	auto action = MoveBy::create(1, ccp(0, -300));
-	obstacleImage->runAction(action);
+	auto action = MoveBy::create(0.25, ccp(0, -visibleSize.height * 0.4));
+	auto seq = Sequence::create(DelayTime::create(1.3), action, NULL);
+	obstacleImage->runAction(seq);
 }
 
 bool Obstacle::CheckNeedDelete() {
-	if (obstacleImage->getPosition().x < -obstacleImage->getContentSize().width / 2)
+	if (obstacleImage->getPosition().x < -width / 2)
 		return true;
 	return false;
 }
