@@ -3,7 +3,7 @@
 Scene* GameScene::createScene() {
 	auto scene = Scene::create();
 	auto layer = GameScene::create();
-	
+
 	scene->addChild(layer);
 	return scene;
 }
@@ -32,8 +32,9 @@ bool GameScene::init()
 	MakeUI();
 	MoveObject();
 
-	int bgmID = experimental::AudioEngine::play2d("sounds/bgm.wav", true);
-	experimental::AudioEngine::preload("sounds/waterdrop.wav");
+	experimental::AudioEngine::play2d("sounds/bgm.mp3", true);
+	experimental::AudioEngine::preload("sounds/waterdrop.mp3");
+
 	this->schedule(schedule_selector(GameScene::Tick));
 
 	return true;
@@ -63,16 +64,15 @@ void GameScene::onExit() {
 
 
 void GameScene::Jump() {
-	if(!fruit->jumping)
+	if (!fruit->jumping)
 		fruit->Jump();
 }
 
 bool GameScene::onTouchBegan(Touch* touch, Event* unused_event) {
 	auto touchPoint = touch->getLocation();
-	
+
 	if (UI->jumpButton->getBoundingBox().containsPoint(touchPoint) && !fruit->jumping) {
 		fruit->Jump();
-		experimental::AudioEngine::play2d("sounds/waterdrop.wav");
 
 		UI->jumpButton->setOpacity(128);
 	}
@@ -82,7 +82,7 @@ bool GameScene::onTouchBegan(Touch* touch, Event* unused_event) {
 		board1->Stop();
 		board2->Stop();
 		waterdrop->Stop();
-		for (pair<string,Obstacle*> o : obstacleMap) {
+		for (pair<string, Obstacle*> o : obstacleMap) {
 			o.second->Stop();
 		}
 		UI->stopButton->setOpacity(128);
@@ -114,7 +114,7 @@ void GameScene::onTouchEnded(Touch* touch, Event *unused_event) {
 		if (waterdrop->moving)
 			waterdrop->StopEnd();
 		for (pair<string, Obstacle*> o : obstacleMap) {
-			if(o.second->moving)
+			if (o.second->moving)
 				o.second->StopEnd();
 		}
 	}
@@ -227,6 +227,7 @@ void GameScene::DeleteObject() {
 void GameScene::CheckCollide() {
 	auto waterdropBoundingbox = waterdrop->waterdropImage->getBoundingBox();
 	if (waterdropBoundingbox.intersectsCircle(fruit->fruitImage->getPosition(), fruit->fruitRadius)) {
+		experimental::AudioEngine::play2d("sounds/waterdrop.mp3");
 		waterdrop->Remove();
 		waterdrop->Stop();
 		MoveObject();
@@ -235,9 +236,9 @@ void GameScene::CheckCollide() {
 	}
 
 	for (pair<string, Obstacle*> obstacle : obstacleMap) {
-		if(obstacle.second->moving){
+		if (obstacle.second->moving) {
 			auto obstacleBoundingbox = obstacle.second->obstacleImage->getBoundingBox();
-		
+
 			if (obstacleBoundingbox.intersectsCircle(fruit->fruitImage->getPosition(), fruit->fruitRadius) && !collided) {
 				health--;
 				fruit->PlayAnimation();
