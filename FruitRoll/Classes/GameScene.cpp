@@ -24,6 +24,7 @@ bool GameScene::init()
 	backgroundType = "KitchenStage";
 	health = 10;
 	score = 0;
+	fullHP = health;
 
 	MakeFruit();
 	MakeBackground();
@@ -31,9 +32,9 @@ bool GameScene::init()
 	MakeUI();
 	MoveObject();
 
-
+	int bgmID = experimental::AudioEngine::play2d("sounds/bgm.wav", true);
+	experimental::AudioEngine::preload("sounds/waterdrop.wav");
 	this->schedule(schedule_selector(GameScene::Tick));
-	SimpleAudioEngine::sharedEngine()->playBackgroundMusic("sounds/bgm.wav", true);
 
 	return true;
 }
@@ -56,6 +57,7 @@ void GameScene::onEnter() {
 
 void GameScene::onExit() {
 	_eventDispatcher->removeAllEventListeners();
+	experimental::AudioEngine::uncacheAll();
 	Layer::onExit();
 }
 
@@ -70,6 +72,9 @@ bool GameScene::onTouchBegan(Touch* touch, Event* unused_event) {
 	
 	if (UI->jumpButton->getBoundingBox().containsPoint(touchPoint) && !fruit->jumping) {
 		fruit->Jump();
+		experimental::AudioEngine::play2d("sounds/waterdrop.wav");
+
+		UI->jumpButton->setOpacity(128);
 	}
 
 	else if (UI->stopButton->getBoundingBox().containsPoint(touchPoint) && !fruit->jumping) {
@@ -80,6 +85,7 @@ bool GameScene::onTouchBegan(Touch* touch, Event* unused_event) {
 		for (pair<string,Obstacle*> o : obstacleMap) {
 			o.second->Stop();
 		}
+		UI->stopButton->setOpacity(128);
 	}
 
 	return true;
@@ -87,7 +93,16 @@ bool GameScene::onTouchBegan(Touch* touch, Event* unused_event) {
 
 void GameScene::onTouchMoved(Touch* touch, Event* unused_event) {
 	auto touchPoint = touch->getLocation();
-
+	if (UI->stopButton->getBoundingBox().containsPoint(touchPoint) && !fruit->jumping) {
+		fruit->Stop();
+		board1->Stop();
+		board2->Stop();
+		waterdrop->Stop();
+		for (pair<string, Obstacle*> o : obstacleMap) {
+			o.second->Stop();
+		}
+		UI->stopButton->setOpacity(128);
+	}
 }
 
 void GameScene::onTouchEnded(Touch* touch, Event *unused_event) {
@@ -103,6 +118,8 @@ void GameScene::onTouchEnded(Touch* touch, Event *unused_event) {
 				o.second->StopEnd();
 		}
 	}
+	UI->jumpButton->setOpacity(255);
+	UI->stopButton->setOpacity(255);
 }
 
 // 배경 추가
@@ -123,6 +140,10 @@ void GameScene::MakeUI() {
 	this->addChild(UI->jumpButton, 100);
 	this->addChild(UI->stopButton, 100);
 	this->addChild(UI->pauseButton, 100);
+	this->addChild(UI->healthLabel, 100);
+	this->addChild(UI->healthBar, 101);
+	this->addChild(UI->healthBarBackground, 100);
+	this->addChild(UI->scoreText, 100);
 }
 
 // 과일 생성
@@ -146,10 +167,9 @@ void GameScene::MakeObject() {
 	this->addChild(obstacleMap["Knife"]->obstacleImage, 5);
 
 	board1 = new Board();
-	this->addChild(board1->boardImage, 1);
-	auto visibleSize = Director::getInstance()->getVisibleSize();
-	board1->boardImage->setPosition(board1->width / 2, board1->height * 1.5);
 	board2 = new Board();
+	board1->boardImage->setPosition(board1->width * 0.5, board1->height * 1.5);
+	this->addChild(board1->boardImage, 1);
 	this->addChild(board2->boardImage, 1);
 }
 
@@ -207,23 +227,26 @@ void GameScene::DeleteObject() {
 void GameScene::CheckCollide() {
 	auto waterdropBoundingbox = waterdrop->waterdropImage->getBoundingBox();
 	if (waterdropBoundingbox.intersectsCircle(fruit->fruitImage->getPosition(), fruit->fruitRadius)) {
-		SimpleAudioEngine::sharedEngine()->playEffect("sounds/waterdrop.wav");
 		waterdrop->Remove();
 		waterdrop->Stop();
 		MoveObject();
 		score++;
+		UI->UpdateInfo((health * 100) / fullHP, score);
 	}
 
 	for (pair<string, Obstacle*> obstacle : obstacleMap) {
-		auto obstacleBoundingbox = obstacle.second->obstacleImage->getBoundingBox();
-
-		if (obstacleBoundingbox.intersectsCircle(fruit->fruitImage->getPosition(), fruit->fruitRadius) && !collided) {
-			health--;
-			fruit->PlayAnimation();
-			collided = true;
-		}
-		if (!obstacleBoundingbox.intersectsCircle(fruit->fruitImage->getPosition(), fruit->fruitRadius) && collided) {
-			collided = false;
+		if(obstacle.second->moving){
+			auto obstacleBoundingbox = obstacle.second->obstacleImage->getBoundingBox();
+		
+			if (obstacleBoundingbox.intersectsCircle(fruit->fruitImage->getPosition(), fruit->fruitRadius) && !collided) {
+				health--;
+				fruit->PlayAnimation();
+				collided = true;
+				UI->UpdateInfo((health * 100) / fullHP, score);
+			}
+			if (!obstacleBoundingbox.intersectsCircle(fruit->fruitImage->getPosition(), fruit->fruitRadius) && collided) {
+				collided = false;
+			}
 		}
 	}
 }

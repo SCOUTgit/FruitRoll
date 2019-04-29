@@ -17,7 +17,7 @@ Waterdrop::~Waterdrop()
 }
 
 void Waterdrop::Move() {
-	auto action = MoveBy::create(1, ccp(-visibleSize.width / 1.6, 0));
+	auto action = MoveBy::create(1, Point(-visibleSize.width / 1.6, 0));
 	auto rf = RepeatForever::create(action);
 	rf->setTag(0);
 	waterdropImage->runAction(rf);

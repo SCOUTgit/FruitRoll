@@ -5,10 +5,9 @@
 #include "Waterdrop.h"
 #include "Board.h"
 #include "GameSceneUI.h"
-#include "SimpleAudioEngine.h"
+#include "AudioEngine.h"
 
 using namespace std;
-using namespace CocosDenshion;
 USING_NS_CC;
 
 class GameScene : public Layer
@@ -21,6 +20,7 @@ public:
 	int playTime;									// 생존 시간
 	int score;										// 점수
 	int money;										// 획득한 물방울
+	int fullHP;										// 원래 체력
 	int health;										// 체력
 	bool collided;									// 충돌 중인지 체크
 	bool end;										// 게임이 끝났는지 체크

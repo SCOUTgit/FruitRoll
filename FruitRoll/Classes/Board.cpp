@@ -19,14 +19,14 @@ Board::~Board()
 }
 
 void Board::Move() {
-	auto action = MoveBy::create(1, ccp(-visibleSize.width / 1.6, 0));
+	auto action = MoveBy::create(1, Point(-visibleSize.width / 1.6, 0));
 	auto rf = RepeatForever::create(action);
 	rf->setTag(0);
 	boardImage->runAction(rf);
 }
 
 void Board::Remove() {
-	boardImage->setPosition(width * 1.5, height * 1.5);
+	boardImage->setPosition(width * 1.45, height * 1.5);
 }
 
 void Board::Stop() {
