@@ -10,11 +10,13 @@ Obstacle::Obstacle(string name)
 	width = obstacleImage->getContentSize().width * scale;
 	height = obstacleImage->getContentSize().height * scale;
 	Remove();
+	experimental::AudioEngine::preload("sounds/DropObstacle.mp3");
 }
 
 
 Obstacle::~Obstacle()
 {
+	experimental::AudioEngine::uncache("sounds/DropObstacle.mp3");
 }
 
 void Obstacle::Move() {
@@ -30,6 +32,7 @@ void Obstacle::Remove() {
 		obstacleImage->setPosition(visibleSize.width + width, visibleSize.height * 0.2 + height / 2);
 	}
 	if (name == "Knife" || name == "Fork") {
+		obstacleImage->stopActionByTag(1);
 		obstacleImage->setPosition(visibleSize.width + width, visibleSize.height * 0.8);
 	}
 	moving = false;
@@ -48,7 +51,8 @@ void Obstacle::StopEnd() {
 
 void Obstacle::Fall() {
 	auto action = MoveBy::create(0.25, Point(0, -visibleSize.height * 0.4));
-	auto seq = Sequence::create(DelayTime::create(1.3), action, NULL);
+	auto seq = Sequence::create(DelayTime::create(1.3), action, CallFunc::create(CC_CALLBACK_0(Obstacle::PlayEffect, this)), NULL);
+	seq->setTag(1);
 	obstacleImage->runAction(seq);
 }
 
@@ -56,4 +60,8 @@ bool Obstacle::CheckNeedDelete() {
 	if (obstacleImage->getPosition().x < -width / 2)
 		return true;
 	return false;
+}
+
+void Obstacle::PlayEffect() {
+	int e = experimental::AudioEngine::play2d("sounds/DropObstacle.mp3");
 }

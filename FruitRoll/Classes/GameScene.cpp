@@ -32,8 +32,8 @@ bool GameScene::init()
 	MakeUI();
 	MoveObject();
 
-	experimental::AudioEngine::play2d("sounds/bgm.mp3", true);
-	experimental::AudioEngine::preload("sounds/waterdrop.mp3");
+	experimental::AudioEngine::play2d("sounds/BGM.mp3", true, 0.5);
+	experimental::AudioEngine::preload("sounds/Waterdrop.mp3");
 
 	this->schedule(schedule_selector(GameScene::Tick));
 
@@ -45,6 +45,20 @@ void GameScene::Tick(float f) {
 	CheckCollide();
 }
 
+void GameScene::OnClickPause() {
+	experimental::AudioEngine::pauseAll();
+
+	fruit->Stop();
+	board1->Stop();
+	board2->Stop();
+	waterdrop->Stop();
+	for (pair<string, Obstacle*> o : obstacleMap) {
+		if (o.second->moving)
+			o.second->obstacleImage->pause();
+	}
+
+	this->addChild(PausePopup::create(), 110);
+}
 
 void GameScene::onEnter() {
 	Layer::onEnter();
@@ -60,12 +74,6 @@ void GameScene::onExit() {
 	_eventDispatcher->removeAllEventListeners();
 	experimental::AudioEngine::uncacheAll();
 	Layer::onExit();
-}
-
-
-void GameScene::Jump() {
-	if (!fruit->jumping)
-		fruit->Jump();
 }
 
 bool GameScene::onTouchBegan(Touch* touch, Event* unused_event) {
@@ -103,6 +111,18 @@ void GameScene::onTouchMoved(Touch* touch, Event* unused_event) {
 		}
 		UI->stopButton->setOpacity(128);
 	}
+	if (!UI->stopButton->getBoundingBox().containsPoint(touchPoint) && board1->stopping) {
+		fruit->StopEnd();
+		board1->StopEnd();
+		board2->StopEnd();
+		if (waterdrop->moving)
+			waterdrop->StopEnd();
+		for (pair<string, Obstacle*> o : obstacleMap) {
+			if (o.second->moving)
+				o.second->StopEnd();
+		}
+		UI->stopButton->setOpacity(255);
+	}
 }
 
 void GameScene::onTouchEnded(Touch* touch, Event *unused_event) {
@@ -139,11 +159,15 @@ void GameScene::MakeUI() {
 	UI = new GameSceneUI();
 	this->addChild(UI->jumpButton, 100);
 	this->addChild(UI->stopButton, 100);
-	this->addChild(UI->pauseButton, 100);
 	this->addChild(UI->healthLabel, 100);
 	this->addChild(UI->healthBar, 101);
 	this->addChild(UI->healthBarBackground, 100);
 	this->addChild(UI->scoreText, 100);
+
+	UI->pauseButton->setCallback(CC_CALLBACK_0(GameScene::OnClickPause, this));
+	auto menu = Menu::create(UI->pauseButton, NULL);
+	menu->setPosition(Point::ZERO);
+	this->addChild(menu, 100);
 }
 
 // 과일 생성
@@ -227,7 +251,7 @@ void GameScene::DeleteObject() {
 void GameScene::CheckCollide() {
 	auto waterdropBoundingbox = waterdrop->waterdropImage->getBoundingBox();
 	if (waterdropBoundingbox.intersectsCircle(fruit->fruitImage->getPosition(), fruit->fruitRadius)) {
-		experimental::AudioEngine::play2d("sounds/waterdrop.mp3");
+		experimental::AudioEngine::play2d("sounds/Waterdrop.mp3");
 		waterdrop->Remove();
 		waterdrop->Stop();
 		MoveObject();
@@ -250,4 +274,41 @@ void GameScene::CheckCollide() {
 			}
 		}
 	}
+}
+
+void GameScene::Jump() {
+	if (!fruit->jumping)
+		fruit->Jump();
+}
+
+void GameScene::Resume() {
+	experimental::AudioEngine::resumeAll();
+
+	fruit->StopEnd();
+	board1->StopEnd();
+	board2->StopEnd();
+	if (waterdrop->moving)
+		waterdrop->StopEnd();
+	for (pair<string, Obstacle*> o : obstacleMap) {
+		if (o.second->moving)
+			o.second->obstacleImage->resume();
+	}
+}
+
+void GameScene::Restart() {
+	experimental::AudioEngine::stopAll();
+	experimental::AudioEngine::play2d("sounds/BGM.mp3", true);
+	health = fullHP;
+	score = 0;
+	collided = false;
+	board1->boardImage->setPosition(board1->width * 0.5, board1->height * 1.5);
+	board2->Remove();
+	waterdrop->Remove();
+	waterdrop->Stop();
+	for (pair<string, Obstacle*> o : obstacleMap) {
+		o.second->Stop();
+		o.second->Remove();
+	}
+	MoveObject();
+	UI->UpdateInfo(100, score);
 }

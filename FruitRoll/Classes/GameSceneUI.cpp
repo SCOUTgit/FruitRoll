@@ -16,7 +16,7 @@ void GameSceneUI::MakeButton() {
 	auto jumpButtonLabel = Label::create("Jump", "fonts/DungGeunMo.ttf", 200);
 	jumpButtonLabel->setColor(Color3B(255, 255, 255));
 
-	jumpButton = Sprite::create("images/Button1.png");
+	jumpButton = Sprite::create("images/Button.png");
 
 	auto jumpButtonScale = (visibleSize.width / jumpButton->getContentSize().width) / 6;
 
@@ -29,7 +29,7 @@ void GameSceneUI::MakeButton() {
 	auto StopButtonLabel = Label::create("Stop", "fonts/DungGeunMo.ttf", 200);
 	StopButtonLabel->setColor(Color3B(255, 255, 255));
 
-	stopButton = Sprite::create("images/Button1.png");
+	stopButton = Sprite::create("images/Button.png");
 
 	auto StopButtonScale = (visibleSize.width / stopButton->getContentSize().width) / 6;
 

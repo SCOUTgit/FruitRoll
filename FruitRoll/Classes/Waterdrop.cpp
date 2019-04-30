@@ -25,7 +25,9 @@ void Waterdrop::Move() {
 }
 
 void Waterdrop::Remove() {
-	waterdropImage->setPosition(visibleSize.width + width, visibleSize.height * 0.3);
+	srand(time(NULL));
+	float n = (float)(rand() % 3) / 5;
+	waterdropImage->setPosition(visibleSize.width + width, visibleSize.height * (0.3 + n));
 	moving = false;
 }
 

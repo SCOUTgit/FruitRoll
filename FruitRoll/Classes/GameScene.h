@@ -5,6 +5,7 @@
 #include "Waterdrop.h"
 #include "Board.h"
 #include "GameSceneUI.h"
+#include "PausePopup.h"
 #include "AudioEngine.h"
 
 using namespace std;
@@ -42,7 +43,10 @@ public:
 	void MoveObject();								// 오브젝트 이동
 	void DeleteObject();							// 오브젝트 삭제
 	void CheckCollide();							// 충돌 체크
+	void OnClickPause();							// 게임 일시 정지
 	void GameOver();								// 게임 오버
+	void Restart();									// 다시 시작
+	void Resume();									// 다시 시작
 
 	virtual void onEnter();
 	virtual void onExit();
