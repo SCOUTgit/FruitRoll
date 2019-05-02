@@ -42,6 +42,15 @@ void Fruit::MakeSprite() {
 	height = fruitImage->getContentSize().height * scale;
 	
 	fruitRadius = width / 2;
+
+	stopLable = Label::create("Stop!!", "fonts/DungGeunMo.ttf", 100);\
+	stopLable->setColor(Color3B(255, 50, 50));
+	stopLable->setVisible(false);
+	stopLable->setPosition(fruitImage->getPositionX(), fruitImage->getPositionY() + height);
+	auto fadeIn = FadeTo::create(0.25, 155);
+	auto fadeOut = FadeTo::create(0.25, 255);
+	auto rf = RepeatForever::create(Sequence::create(fadeIn, fadeOut, NULL));
+	stopLable->runAction(rf);
 }
 
 void Fruit::Jump() {
@@ -58,7 +67,7 @@ void Fruit::JumpEnd() {
 	StopEnd();
 }
 
-void Fruit::Stop() {    
+void Fruit::Stop() {
 	stopping = true;
 	fruitImage->stopActionByTag(0);
 }
@@ -82,4 +91,19 @@ void Fruit::PlayAnimation() {
 	fruitImage->runAction(fruitAnimate);
 	auto seq = Sequence::create(fadeIn, fadeOut, fadeIn, fadeOut, NULL);
 	fruitImage->runAction(seq);
+}
+
+void Fruit::Restart() {
+	fruitImage->stopAllActions();
+	Rotate();
+	fruitImage->setPosition(Director::getInstance()->getVisibleSize().width / 8, Director::getInstance()->getVisibleSize().height / 3);
+	auto fruitSprite = Sprite::create("images/" + fruitType + ".png");
+	auto sizeX = fruitSprite->getContentSize().width;
+	auto sizeY = fruitSprite->getContentSize().height / 2;
+	auto frame = SpriteFrame::create("images/" + fruitType + ".png", Rect(0, 0, sizeX, sizeY));
+	fruitImage->setSpriteFrame(frame);
+	fruitImage->setOpacity(255);
+	stopLable->setVisible(false);
+	jumping = false;
+	stopping = false;
 }

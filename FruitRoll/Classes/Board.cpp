@@ -12,6 +12,7 @@ Board::Board()
 	height = boardImage->getContentSize().height * scale;
 	Remove();
 	Move();
+	boardImage->setScaleX(scale * 1.1);
 }
 
 Board::~Board()
@@ -26,7 +27,7 @@ void Board::Move() {
 }
 
 void Board::Remove() {
-	boardImage->setPosition(width * 1.45, height * 1.5);
+	boardImage->setPosition(width * 1.5, height * 1.5);
 }
 
 void Board::Stop() {

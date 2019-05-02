@@ -18,13 +18,11 @@ bool GameScene::init()
 		return false;
 	}
 
-	auto visibleSize = Director::getInstance()->getVisibleSize();
-	Vec2 origin = Director::getInstance()->getVisibleOrigin();
-
 	backgroundType = "KitchenStage";
-	health = 10;
+	health = 3;
 	score = 0;
 	fullHP = health;
+	end = false;
 
 	MakeFruit();
 	MakeBackground();
@@ -42,16 +40,20 @@ bool GameScene::init()
 
 void GameScene::Tick(float f) {
 	DeleteObject();
-	CheckCollide();
+	CheckCollide(); 
+	if (health <= 0 && !end) {
+		end = true;
+		GameOver();
+	}
 }
 
 void GameScene::OnClickPause() {
 	experimental::AudioEngine::pauseAll();
 
-	fruit->Stop();
-	board1->Stop();
-	board2->Stop();
-	waterdrop->Stop();
+	fruit->fruitImage->pause();
+	board1->boardImage->pause();
+	board2->boardImage->pause();
+	waterdrop->waterdropImage->pause();
 	for (pair<string, Obstacle*> o : obstacleMap) {
 		if (o.second->moving)
 			o.second->obstacleImage->pause();
@@ -78,14 +80,13 @@ void GameScene::onExit() {
 
 bool GameScene::onTouchBegan(Touch* touch, Event* unused_event) {
 	auto touchPoint = touch->getLocation();
-
 	if (UI->jumpButton->getBoundingBox().containsPoint(touchPoint) && !fruit->jumping) {
 		fruit->Jump();
-
 		UI->jumpButton->setOpacity(128);
 	}
 
 	else if (UI->stopButton->getBoundingBox().containsPoint(touchPoint) && !fruit->jumping) {
+		fruit->stopLable->setVisible(true);
 		fruit->Stop();
 		board1->Stop();
 		board2->Stop();
@@ -101,7 +102,8 @@ bool GameScene::onTouchBegan(Touch* touch, Event* unused_event) {
 
 void GameScene::onTouchMoved(Touch* touch, Event* unused_event) {
 	auto touchPoint = touch->getLocation();
-	if (UI->stopButton->getBoundingBox().containsPoint(touchPoint) && !fruit->jumping) {
+	if (UI->stopButton->getBoundingBox().containsPoint(touchPoint) && !fruit->jumping && !board1->stopping) {
+		fruit->stopLable->setVisible(true);
 		fruit->Stop();
 		board1->Stop();
 		board2->Stop();
@@ -112,6 +114,7 @@ void GameScene::onTouchMoved(Touch* touch, Event* unused_event) {
 		UI->stopButton->setOpacity(128);
 	}
 	if (!UI->stopButton->getBoundingBox().containsPoint(touchPoint) && board1->stopping) {
+		fruit->stopLable->setVisible(false);
 		fruit->StopEnd();
 		board1->StopEnd();
 		board2->StopEnd();
@@ -128,6 +131,7 @@ void GameScene::onTouchMoved(Touch* touch, Event* unused_event) {
 void GameScene::onTouchEnded(Touch* touch, Event *unused_event) {
 	auto touchPoint = touch->getLocation();
 	if (board1->stopping) {
+		fruit->stopLable->setVisible(false);
 		fruit->StopEnd();
 		board1->StopEnd();
 		board2->StopEnd();
@@ -146,12 +150,9 @@ void GameScene::onTouchEnded(Touch* touch, Event *unused_event) {
 void GameScene::MakeBackground() {
 	// sceneType 정하기
 	backgroundImage = Sprite::create("images\\" + backgroundType + ".png");
-	backgroundImage->setAnchorPoint(Point::ZERO);
-
-	// 화면에 맞춰서 배경의 크기 조절하기
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	backgroundImage->setScale(visibleSize.width / backgroundImage->getContentSize().width, visibleSize.height / backgroundImage->getContentSize().height);
-
+	backgroundImage->setAnchorPoint(Point::ZERO);
 	this->addChild(backgroundImage, 0);
 }
 
@@ -174,6 +175,7 @@ void GameScene::MakeUI() {
 void GameScene::MakeFruit() {
 	fruit = new Fruit("Apple");
 	this->addChild(fruit->fruitImage, 10);
+	this->addChild(fruit->stopLable, 10);
 	fruit->Rotate();
 }
 
@@ -284,11 +286,10 @@ void GameScene::Jump() {
 void GameScene::Resume() {
 	experimental::AudioEngine::resumeAll();
 
-	fruit->StopEnd();
-	board1->StopEnd();
-	board2->StopEnd();
-	if (waterdrop->moving)
-		waterdrop->StopEnd();
+	fruit->fruitImage->resume();
+	board1->boardImage->resume();
+	board2->boardImage->resume();
+	waterdrop->waterdropImage->resume();
 	for (pair<string, Obstacle*> o : obstacleMap) {
 		if (o.second->moving)
 			o.second->obstacleImage->resume();
@@ -301,6 +302,9 @@ void GameScene::Restart() {
 	health = fullHP;
 	score = 0;
 	collided = false;
+	end = false;
+
+	fruit->Restart();
 	board1->boardImage->setPosition(board1->width * 0.5, board1->height * 1.5);
 	board2->Remove();
 	waterdrop->Remove();
@@ -311,4 +315,21 @@ void GameScene::Restart() {
 	}
 	MoveObject();
 	UI->UpdateInfo(100, score);
+}
+
+void GameScene::GameOver() {
+	experimental::AudioEngine::pauseAll();
+
+	fruit->fruitImage->pause();
+	board1->boardImage->pause();
+	board2->boardImage->pause();
+	waterdrop->waterdropImage->pause();
+	for (pair<string, Obstacle*> o : obstacleMap) {
+		if (o.second->moving)
+			o.second->obstacleImage->pause();
+	}
+
+	auto gopu = GameoverPopup::create();
+	gopu->GetInfo(score);
+	this->addChild(gopu, 110);
 }

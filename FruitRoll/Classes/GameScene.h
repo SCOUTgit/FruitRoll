@@ -6,6 +6,7 @@
 #include "Board.h"
 #include "GameSceneUI.h"
 #include "PausePopup.h"
+#include "GameoverPopup.h"
 #include "AudioEngine.h"
 
 using namespace std;
@@ -46,7 +47,7 @@ public:
 	void OnClickPause();							// 게임 일시 정지
 	void GameOver();								// 게임 오버
 	void Restart();									// 다시 시작
-	void Resume();									// 다시 시작
+	void Resume();									// 돌아가기
 
 	virtual void onEnter();
 	virtual void onExit();
