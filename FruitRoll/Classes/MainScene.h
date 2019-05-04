@@ -3,15 +3,12 @@
 
 using namespace cocos2d;
 
-class MainScene : public Scene
+class MainScene : public Layer
 {
 public:
 	static Scene* createScene();
 
 	virtual bool init();
-
-	// a selector callback
-	void menuCloseCallback(Ref* pSender);
 
 	// implement the "static create()" method manually
 	CREATE_FUNC(MainScene);

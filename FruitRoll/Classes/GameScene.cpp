@@ -8,18 +8,14 @@ Scene* GameScene::createScene() {
 	return scene;
 }
 
-// on "init" you need to initialize your instance
 bool GameScene::init()
 {
-	//////////////////////////////
-	// 1. super init first
 	if (!Layer::init())
 	{
 		return false;
 	}
 
-	backgroundType = "KitchenStage";
-	health = 3;
+	health = 30;
 	score = 0;
 	fullHP = health;
 	end = false;
@@ -86,6 +82,8 @@ bool GameScene::onTouchBegan(Touch* touch, Event* unused_event) {
 	}
 
 	else if (UI->stopButton->getBoundingBox().containsPoint(touchPoint) && !fruit->jumping) {
+		health--;
+		UI->UpdateInfo((health * 100) / fullHP, score);
 		fruit->stopLable->setVisible(true);
 		fruit->Stop();
 		board1->Stop();
@@ -103,6 +101,8 @@ bool GameScene::onTouchBegan(Touch* touch, Event* unused_event) {
 void GameScene::onTouchMoved(Touch* touch, Event* unused_event) {
 	auto touchPoint = touch->getLocation();
 	if (UI->stopButton->getBoundingBox().containsPoint(touchPoint) && !fruit->jumping && !board1->stopping) {
+		health--;
+		UI->UpdateInfo((health * 100) / fullHP, score);
 		fruit->stopLable->setVisible(true);
 		fruit->Stop();
 		board1->Stop();
@@ -149,7 +149,18 @@ void GameScene::onTouchEnded(Touch* touch, Event *unused_event) {
 // 배경 추가
 void GameScene::MakeBackground() {
 	// sceneType 정하기
-	backgroundImage = Sprite::create("images\\" + backgroundType + ".png");
+	string type;
+	srand(time(NULL));
+	int n = rand() % 2;
+	switch (n) {
+	case 0:
+		type = "FridgeStage";
+		break;
+	case 1:
+		type = "KitchenStage";
+		break;
+	}
+	auto backgroundImage = Sprite::create("images\\" + type + ".png");
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	backgroundImage->setScale(visibleSize.width / backgroundImage->getContentSize().width, visibleSize.height / backgroundImage->getContentSize().height);
 	backgroundImage->setAnchorPoint(Point::ZERO);
@@ -227,7 +238,6 @@ void GameScene::MoveObject() {
 }
 
 // 오브젝트 자동삭제
-// 좌표 끝까지 움직였을 때 삭제
 void GameScene::DeleteObject() {
 	if (waterdrop->CheckNeedDelete()) {
 		waterdrop->Stop();
@@ -266,7 +276,7 @@ void GameScene::CheckCollide() {
 			auto obstacleBoundingbox = obstacle.second->obstacleImage->getBoundingBox();
 
 			if (obstacleBoundingbox.intersectsCircle(fruit->fruitImage->getPosition(), fruit->fruitRadius) && !collided) {
-				health--;
+				health-=10;
 				fruit->PlayAnimation();
 				collided = true;
 				UI->UpdateInfo((health * 100) / fullHP, score);

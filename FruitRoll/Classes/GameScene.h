@@ -26,8 +26,6 @@ public:
 	int health;										// 체력
 	bool collided;									// 충돌 중인지 체크
 	bool end;										// 게임이 끝났는지 체크
-	string backgroundType;							// 배경의 종류
-	Sprite* backgroundImage;						// 배경의 이미지
 	Fruit* fruit;									// 과일
 	Waterdrop* waterdrop;							// 물방울
 	unordered_map<string, Obstacle*> obstacleMap;	// 장애물 
