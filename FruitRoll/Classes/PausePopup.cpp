@@ -107,5 +107,5 @@ void PausePopup::OnClickRestart(Ref* object) {
 }
 
 void PausePopup::OnClickGoMain(Ref* object) {
-
+	((GameScene *)this->getParent())->GoMain();
 }

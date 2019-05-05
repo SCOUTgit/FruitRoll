@@ -8,6 +8,7 @@
 #include "PausePopup.h"
 #include "GameoverPopup.h"
 #include "AudioEngine.h"
+#include "MainScene.h"
 
 using namespace std;
 USING_NS_CC;
@@ -19,7 +20,6 @@ public:
 
 	virtual bool init();
 
-	int playTime;									// 생존 시간
 	int score;										// 점수
 	int money;										// 획득한 물방울
 	int fullHP;										// 원래 체력
@@ -32,6 +32,7 @@ public:
 	Board* board1;									// 나무판자1
 	Board* board2;									// 나무판자2
 	GameSceneUI* UI;								// 게임씬 UI
+	EventListenerTouchOneByOne* listener;			// 터치 리스너
 
 	void Tick(float f);								// 한 프레임마다 호출
 	void Jump();									// 점프버튼이 눌렸을 때
@@ -46,6 +47,7 @@ public:
 	void GameOver();								// 게임 오버
 	void Restart();									// 다시 시작
 	void Resume();									// 돌아가기
+	void GoMain();									// 메인화면
 
 	virtual void onEnter();
 	virtual void onExit();
