@@ -1,4 +1,5 @@
 #pragma once
+#pragma execution_character_set("UTF-8")
 #include "cocos2d.h"
 #include "GameScene.h"
 
