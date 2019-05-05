@@ -2,7 +2,8 @@
 #pragma execution_character_set("UTF-8")
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
-
+#include "AudioEngine.h"
+#include "GameScene.h"
 
 using namespace std;
 USING_NS_CC;
@@ -19,6 +20,7 @@ public:
 	int waterdrop;									// 소유한 물방울
 	string fruitType;								// 과일 타입
 	ui::Text* HPText;								// 체력 텍스트
+	ui::Text* waterdropText;						// 소유한 물방울 텍스트
 	ui::Text* needWaterdropText;					// 체력강화에 필요한 물방울 텍스트
 	Size visibleSize;								// 화면 사이즈
 	Sprite* selectedSprite;							// 선택한 과일을 가리키는 스프라이트

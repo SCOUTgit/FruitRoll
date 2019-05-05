@@ -102,7 +102,7 @@ void GameoverPopup::OnClickRestart(Ref* object) {
 }
 
 void GameoverPopup::OnClickGoMain(Ref* object) {
-
+	((GameScene *)this->getParent())->GoMain();
 }
 
 void GameoverPopup::GetInfo(int score) {

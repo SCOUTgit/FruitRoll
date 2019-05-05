@@ -22,17 +22,17 @@ bool MainScene::init()
 }
 
 void MainScene::MakeBackground() {
+	experimental::AudioEngine::play2d("sounds/MainTheme.mp3", true);
 	auto backgroundImage = Sprite::create("images/BackgroundFridge.png");
 	backgroundImage->setScale(visibleSize.width / backgroundImage->getContentSize().width, visibleSize.height / backgroundImage->getContentSize().height);
 	backgroundImage->setAnchorPoint(Point::ZERO);
 	this->addChild(backgroundImage, 0);
-	
 }
 
 void MainScene::MakeUI() {
-	bestScore = 10000;
-	waterdrop = 23;
-	HP = 30;
+	bestScore = UserDefault::getInstance()->getIntegerForKey("bestScore", 0);
+	waterdrop = UserDefault::getInstance()->getIntegerForKey("waterdrop", 0);
+	HP = UserDefault::getInstance()->getIntegerForKey("HP", 10);
 
 	// 최고점수 레이블 생성
 	auto bestScoreLabel = Label::create("최고점수:" + to_string(bestScore), "fonts/DungGeunMo.ttf", 70);
@@ -46,12 +46,12 @@ void MainScene::MakeUI() {
 	waterdropSprite->setScale((visibleSize.width / waterdropSprite->getContentSize().width) / 20);
 	waterdropSprite->setPosition(-visibleSize.width / 30, 50);
 
-	auto watedropText = ui::Text::create("x" + to_string(waterdrop), "fonts/DungGeunMo.ttf", 100);
-	watedropText->setColor(Color3B(0, 0, 0));
-	watedropText->setPosition(Point(visibleSize.width * 0.25, visibleSize.height * 0.5));
-	watedropText->addChild(waterdropSprite);
+	waterdropText = ui::Text::create("x" + to_string(waterdrop), "fonts/DungGeunMo.ttf", 100);
+	waterdropText->setColor(Color3B(0, 0, 0));
+	waterdropText->setPosition(Point(visibleSize.width * 0.25, visibleSize.height * 0.5));
+	waterdropText->addChild(waterdropSprite);
 
-	this->addChild(watedropText, 1);
+	this->addChild(waterdropText, 1);
 
 	// 체력 표시
 	auto HPLabel = Label::create("HP", "fonts/DungGeunMo.ttf", 100);
@@ -70,7 +70,7 @@ void MainScene::MakeUI() {
 		needWaterdropText = ui::Text::create("최대 체력", "fonts/DungGeunMo.ttf", 50);
 	}
 	else{
-		needWaterdropText = ui::Text::create("필요한 물방울" + to_string(HP * 5) + "개", "fonts/DungGeunMo.ttf", 35);
+		needWaterdropText = ui::Text::create("필요한 물방울" + to_string(HP * 2) + "개", "fonts/DungGeunMo.ttf", 35);
 		
 		// 강화 버튼
 		auto upgradeHPMenuItem = MenuItemFont::create("강화하기", CC_CALLBACK_0(MainScene::UpgradeHP, this));
@@ -115,7 +115,7 @@ void MainScene::MakeUI() {
 	auto pearSprite = Sprite::create("images/Pear.png");
 	auto pearMenuItem = MenuItemSprite::create(Sprite::createWithTexture(pearSprite->getTexture(), Rect(0, 0, pearSprite->getContentSize().width, pearSprite->getContentSize().height / 2)),
 		Sprite::createWithTexture(pearSprite->getTexture(), Rect(0, pearSprite->getContentSize().height / 2, pearSprite->getContentSize().width, pearSprite->getContentSize().height / 2)));
-	pearMenuItem->setCallback(CC_CALLBACK_0(MainScene::SelectFruit, this, "paer"));
+	pearMenuItem->setCallback(CC_CALLBACK_0(MainScene::SelectFruit, this, "pear"));
 	pearMenuItem->setScale(0.25);
 
 	fruitMenu = Menu::create(appleMenuItem, orangeMenuItem, pearMenuItem, NULL);
@@ -125,8 +125,9 @@ void MainScene::MakeUI() {
 	this->addChild(fruitMenu, 1);
 
 	selectedSprite = Sprite::create("images/Arrow.png");
-	selectedSprite->setPosition(fruitMenu->getPositionX() - 160, fruitMenu->getPositionY() - 150);
+	selectedSprite->setPosition(fruitMenu->getPositionX() - 150, fruitMenu->getPositionY() - 150);
 	selectedSprite->setScale(0.5);
+	UserDefault::getInstance()->setStringForKey("selectedFruit", "Apple");
 
 	auto action = MoveBy::create(0.5, Point(0, 20));
 	auto seq = Sequence::create(action, action->reverse(), NULL);
@@ -148,13 +149,38 @@ void MainScene::MakeUI() {
 }
 
 void MainScene::SelectFruit(string type) {
+	if (type == "apple") {
+		fruitType = "apple";
+		selectedSprite->setPosition(fruitMenu->getPositionX() - 150, fruitMenu->getPositionY() - 150);
+		UserDefault::getInstance()->setStringForKey("selectedFruit", "Apple");
 
+	}
+	else if (type == "orange") {
+		fruitType = "orange";
+		selectedSprite->setPosition(fruitMenu->getPositionX(), fruitMenu->getPositionY() - 150);
+		UserDefault::getInstance()->setStringForKey("selectedFruit", "Orange");
+	}
+	else if (type == "pear") {
+		fruitType = "pear";
+		selectedSprite->setPosition(fruitMenu->getPositionX() + 150, fruitMenu->getPositionY() - 150);
+		UserDefault::getInstance()->setStringForKey("selectedFruit", "Pear");
+	}
 }
 
 void MainScene::UpgradeHP() {
-
+	if (waterdrop >= HP * 2) {
+		waterdrop -= HP * 2;
+		waterdropText->setText(to_string(waterdrop));
+		HP += 5;
+		HPText->setText(to_string(HP));
+		needWaterdropText->setText("필요한 물방울" + to_string(HP * 2) + "개");
+		UserDefault::getInstance()->setIntegerForKey("HP", HP);
+		UserDefault::getInstance()->setIntegerForKey("waterdrop", waterdrop);
+	}
 }
 
 void MainScene::Start() {
-
+	experimental::AudioEngine::stopAll();
+	UserDefault::getInstance()->flush();
+	Director::getInstance()->replaceScene(GameScene::createScene());
 }

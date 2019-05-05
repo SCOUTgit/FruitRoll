@@ -15,7 +15,7 @@ bool GameScene::init()
 		return false;
 	}
 
-	health = 30;
+	health = UserDefault::getInstance()->getIntegerForKey("HP");
 	score = 0;
 	fullHP = health;
 	end = false;
@@ -60,7 +60,7 @@ void GameScene::OnClickPause() {
 
 void GameScene::onEnter() {
 	Layer::onEnter();
-	auto listener = EventListenerTouchOneByOne::create();
+	listener = EventListenerTouchOneByOne::create();
 	listener->setSwallowTouches(true);
 	listener->onTouchBegan = CC_CALLBACK_2(GameScene::onTouchBegan, this);
 	listener->onTouchMoved = CC_CALLBACK_2(GameScene::onTouchMoved, this);
@@ -69,8 +69,8 @@ void GameScene::onEnter() {
 }
 
 void GameScene::onExit() {
-	_eventDispatcher->removeAllEventListeners();
-	experimental::AudioEngine::uncacheAll();
+	_eventDispatcher->removeEventListener(listener);
+	experimental::AudioEngine::uncache("sounds/Waterdrop.mp3");
 	Layer::onExit();
 }
 
@@ -184,7 +184,8 @@ void GameScene::MakeUI() {
 
 // 과일 생성
 void GameScene::MakeFruit() {
-	fruit = new Fruit("Apple");
+	string fruitType = UserDefault::getInstance()->getStringForKey("selectedFruit");
+	fruit = new Fruit(fruitType);
 	this->addChild(fruit->fruitImage, 10);
 	this->addChild(fruit->stopLable, 10);
 	fruit->Rotate();
@@ -338,8 +339,22 @@ void GameScene::GameOver() {
 		if (o.second->moving)
 			o.second->obstacleImage->pause();
 	}
-
+	
 	auto gopu = GameoverPopup::create();
 	gopu->GetInfo(score);
 	this->addChild(gopu, 110);
+	
+	int waterdropScore = score + UserDefault::getInstance()->getIntegerForKey("waterdrop");
+	UserDefault::getInstance()->setIntegerForKey("waterdrop", waterdropScore);
+
+	int bestScore = UserDefault::getInstance()->getIntegerForKey("bestScore");
+	if (bestScore < score) {
+		UserDefault::getInstance()->setIntegerForKey("bestScore", score);
+	}
+
+	UserDefault::getInstance()->flush();
+}
+
+void GameScene::GoMain() {
+	Director::getInstance()->replaceScene(TransitionFade::create(1, MainScene::createScene()));
 }
