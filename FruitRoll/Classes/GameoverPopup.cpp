@@ -64,19 +64,15 @@ void GameoverPopup::MakePopUp() {
 
 	this->addChild(pauseBg);
 
-	char str[20];
-
 	// 다시시작 버튼
-	WideCharToMultiByte(CP_UTF8, 0, L"다시하기", -1, str, 20, NULL, NULL);
-	auto restartMenu = MenuItemFont::create(str, CC_CALLBACK_1(GameoverPopup::OnClickRestart, this));
+	auto restartMenu = MenuItemFont::create("다시시작", CC_CALLBACK_1(GameoverPopup::OnClickRestart, this));
 	restartMenu->setColor(Color3B(255, 255, 255));
 	restartMenu->setPosition(Point((pauseBg->getContentSize().height / 2), (pauseBg->getContentSize().height / 2)));
 	restartMenu->setFontNameObj("fonts/DungGeunMo.ttf");
 
 
 	// 메인화면 버튼
-	WideCharToMultiByte(CP_UTF8, 0, L"메인화면", -1, str, 20, NULL, NULL);
-	auto gomainMenu = MenuItemFont::create(str, CC_CALLBACK_1(GameoverPopup::OnClickGoMain, this));
+	auto gomainMenu = MenuItemFont::create("메인화면", CC_CALLBACK_1(GameoverPopup::OnClickGoMain, this));
 	gomainMenu->setColor(Color3B(255, 255, 255));
 	gomainMenu->setPosition(Point((pauseBg->getContentSize().height / 2), (pauseBg->getContentSize().height / 2) - 100));
 	gomainMenu->setFontNameObj("fonts/DungGeunMo.ttf");
@@ -110,7 +106,5 @@ void GameoverPopup::OnClickGoMain(Ref* object) {
 }
 
 void GameoverPopup::GetInfo(int score) {
-	char str[20];
-	WideCharToMultiByte(CP_UTF8, 0, L"개 획득", -1, str, 20, NULL, NULL);
-	scoreText->setText(to_string(score) + str);
+	scoreText->setText(to_string(score) + "개 획득");
 }

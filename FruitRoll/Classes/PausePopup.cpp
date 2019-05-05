@@ -68,27 +68,22 @@ void PausePopup::MakePopUp() {
 
 	this->addChild(pauseBg);
 
-	char str[20];
-
 	// 돌아가기 버튼
-	WideCharToMultiByte(CP_UTF8, 0,  L"돌아가기", -1, str, 20, NULL, NULL);
-	auto resumeMenu = MenuItemFont::create(str, CC_CALLBACK_1(PausePopup::OnClickResume, this));
+	auto resumeMenu = MenuItemFont::create("돌아가기", CC_CALLBACK_1(PausePopup::OnClickResume, this));
 	resumeMenu->setColor(Color3B(255, 255, 255));
 	resumeMenu->setPosition(Point((pauseBg->getContentSize().height / 2), (pauseBg->getContentSize().height / 2) + 100));
 	resumeMenu->setFontNameObj("fonts/DungGeunMo.ttf");
 
 
 	// 다시시작 버튼
-	WideCharToMultiByte(CP_UTF8, 0, L"다시하기", -1, str, 20, NULL, NULL);
-	auto restartMenu = MenuItemFont::create(str, CC_CALLBACK_1(PausePopup::OnClickRestart, this));
+	auto restartMenu = MenuItemFont::create("다시시작", CC_CALLBACK_1(PausePopup::OnClickRestart, this));
 	restartMenu->setColor(Color3B(255, 255, 255));
 	restartMenu->setPosition(Point((pauseBg->getContentSize().height / 2), (pauseBg->getContentSize().height / 2)));
 	restartMenu->setFontNameObj("fonts/DungGeunMo.ttf");
 
 
 	// 메인화면 버튼
-	WideCharToMultiByte(CP_UTF8, 0, L"메인화면", -1, str, 20, NULL, NULL);
-	auto gomainMenu = MenuItemFont::create(str, CC_CALLBACK_1(PausePopup::OnClickGoMain, this));
+	auto gomainMenu = MenuItemFont::create("메인화면", CC_CALLBACK_1(PausePopup::OnClickGoMain, this));
 	gomainMenu->setColor(Color3B(255, 255, 255));
 	gomainMenu->setPosition(Point((pauseBg->getContentSize().height / 2), (pauseBg->getContentSize().height / 2) - 100));
 	gomainMenu->setFontNameObj("fonts/DungGeunMo.ttf");
