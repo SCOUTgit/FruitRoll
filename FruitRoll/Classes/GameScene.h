@@ -54,6 +54,7 @@ public:
 	virtual bool onTouchBegan(Touch* touch, Event* unused_event);
 	virtual void onTouchMoved(Touch* touch, Event* unused_event);
 	virtual void onTouchEnded(Touch* touch, Event *unused_event);
+	virtual void onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event);
 
 	// implement the "static create()" method manually
 	CREATE_FUNC(GameScene);

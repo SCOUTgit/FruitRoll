@@ -32,6 +32,8 @@ public:
 	void SelectFruit(string type);					// 과일 선택
 	void UpgradeHP();								// 체력 강화
 
+	virtual void onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event);
+
 	// implement the "static create()" method manually
 	CREATE_FUNC(MainScene);
 };

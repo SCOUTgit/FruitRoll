@@ -146,6 +146,11 @@ void GameScene::onTouchEnded(Touch* touch, Event *unused_event) {
 	UI->stopButton->setOpacity(255);
 }
 
+void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event) {
+	if (keyCode == EventKeyboard::KeyCode::KEY_BACK)
+		OnClickPause();
+}
+
 // 배경 추가
 void GameScene::MakeBackground() {
 	// sceneType 정하기
