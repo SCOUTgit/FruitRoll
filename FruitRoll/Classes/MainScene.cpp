@@ -184,3 +184,8 @@ void MainScene::Start() {
 	UserDefault::getInstance()->flush();
 	Director::getInstance()->replaceScene(GameScene::createScene());
 }
+
+void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event) {
+	if (keyCode == EventKeyboard::KeyCode::KEY_BACK)
+		Director::getInstance()->end();
+}
