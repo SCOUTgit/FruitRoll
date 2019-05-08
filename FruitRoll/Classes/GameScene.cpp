@@ -44,18 +44,20 @@ void GameScene::Tick(float f) {
 }
 
 void GameScene::OnClickPause() {
-	experimental::AudioEngine::pauseAll();
+	if (!end) {
+		experimental::AudioEngine::pauseAll();
 
-	fruit->fruitImage->pause();
-	board1->boardImage->pause();
-	board2->boardImage->pause();
-	waterdrop->waterdropImage->pause();
-	for (pair<string, Obstacle*> o : obstacleMap) {
-		if (o.second->moving)
-			o.second->obstacleImage->pause();
+		fruit->fruitImage->pause();
+		board1->boardImage->pause();
+		board2->boardImage->pause();
+		waterdrop->waterdropImage->pause();
+		for (pair<string, Obstacle*> o : obstacleMap) {
+			if (o.second->moving)
+				o.second->obstacleImage->pause();
+		}
+		paused = true;
+		this->addChild(PausePopup::create(), 110);
 	}
-
-	this->addChild(PausePopup::create(), 110);
 }
 
 void GameScene::onEnter() {
@@ -66,10 +68,15 @@ void GameScene::onEnter() {
 	listener->onTouchMoved = CC_CALLBACK_2(GameScene::onTouchMoved, this);
 	listener->onTouchEnded = CC_CALLBACK_2(GameScene::onTouchEnded, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+
+	keyListener = EventListenerKeyboard::create();
+	keyListener->onKeyReleased = CC_CALLBACK_2(GameScene::onKeyReleased, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
 }
 
 void GameScene::onExit() {
 	_eventDispatcher->removeEventListener(listener);
+	_eventDispatcher->removeEventListener(keyListener);
 	experimental::AudioEngine::uncache("sounds/Waterdrop.mp3");
 	Layer::onExit();
 }
@@ -113,7 +120,7 @@ void GameScene::onTouchMoved(Touch* touch, Event* unused_event) {
 		}
 		UI->stopButton->setOpacity(128);
 	}
-	if (!UI->stopButton->getBoundingBox().containsPoint(touchPoint) && board1->stopping) {
+	if (!UI->stopButton->getBoundingBox().containsPoint(touchPoint) && board1->stopping && !end) {
 		fruit->stopLable->setVisible(false);
 		fruit->StopEnd();
 		board1->StopEnd();
@@ -130,7 +137,7 @@ void GameScene::onTouchMoved(Touch* touch, Event* unused_event) {
 
 void GameScene::onTouchEnded(Touch* touch, Event *unused_event) {
 	auto touchPoint = touch->getLocation();
-	if (board1->stopping) {
+	if (board1->stopping && !end) {
 		fruit->stopLable->setVisible(false);
 		fruit->StopEnd();
 		board1->StopEnd();
@@ -147,7 +154,7 @@ void GameScene::onTouchEnded(Touch* touch, Event *unused_event) {
 }
 
 void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event) {
-	if (keyCode == EventKeyboard::KeyCode::KEY_BACK)
+	if (keyCode == EventKeyboard::KeyCode::KEY_BACK && !paused)
 		OnClickPause();
 }
 
@@ -274,6 +281,7 @@ void GameScene::CheckCollide() {
 		waterdrop->Stop();
 		MoveObject();
 		score++;
+		health++;
 		UI->UpdateInfo((health * 100) / fullHP, score);
 	}
 
@@ -310,6 +318,7 @@ void GameScene::Resume() {
 		if (o.second->moving)
 			o.second->obstacleImage->resume();
 	}
+	paused = false;
 }
 
 void GameScene::Restart() {
@@ -331,9 +340,22 @@ void GameScene::Restart() {
 	}
 	MoveObject();
 	UI->UpdateInfo(100, score);
+	paused = false;
 }
 
 void GameScene::GameOver() {
+	if (board1->stopping) {
+		fruit->stopLable->setVisible(false);
+		fruit->StopEnd();
+		board1->StopEnd();
+		board2->StopEnd();
+		if (waterdrop->moving)
+			waterdrop->StopEnd();
+		for (pair<string, Obstacle*> o : obstacleMap) {
+			if (o.second->moving)
+				o.second->StopEnd();
+		}
+	}
 	experimental::AudioEngine::pauseAll();
 
 	fruit->fruitImage->pause();

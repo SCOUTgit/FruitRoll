@@ -15,6 +15,10 @@ bool MainScene::init()
 		return false;
 	}
 
+	keyListener = EventListenerKeyboard::create();
+	keyListener->onKeyReleased = CC_CALLBACK_2(MainScene::onKeyReleased, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
+
 	visibleSize = Director::getInstance()->getVisibleSize();
 	MakeBackground();
 	MakeUI();
@@ -180,12 +184,13 @@ void MainScene::UpgradeHP() {
 }
 
 void MainScene::Start() {
+	_eventDispatcher->removeEventListener(keyListener);
 	experimental::AudioEngine::stopAll();
 	UserDefault::getInstance()->flush();
 	Director::getInstance()->replaceScene(GameScene::createScene());
 }
 
-void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event) {
+void MainScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event) {
 	if (keyCode == EventKeyboard::KeyCode::KEY_BACK)
 		Director::getInstance()->end();
 }
