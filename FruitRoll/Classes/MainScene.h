@@ -25,6 +25,7 @@ public:
 	Size visibleSize;								// 화면 사이즈
 	Sprite* selectedSprite;							// 선택한 과일을 가리키는 스프라이트
 	Menu* fruitMenu;								// 선택할 과일들이 있는 메뉴
+	EventListenerKeyboard* keyListener;				// 키보드 리스너
 
 	void MakeBackground();							// 배경 생성
 	void MakeUI();									// UI 생성

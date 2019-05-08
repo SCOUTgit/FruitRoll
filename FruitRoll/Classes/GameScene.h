@@ -25,6 +25,7 @@ public:
 	int fullHP;										// 원래 체력
 	int health;										// 체력
 	bool collided;									// 충돌 중인지 체크
+	bool paused;									// 게임이 멈췄는지 체크
 	bool end;										// 게임이 끝났는지 체크
 	Fruit* fruit;									// 과일
 	Waterdrop* waterdrop;							// 물방울
@@ -33,6 +34,7 @@ public:
 	Board* board2;									// 나무판자2
 	GameSceneUI* UI;								// 게임씬 UI
 	EventListenerTouchOneByOne* listener;			// 터치 리스너
+	EventListenerKeyboard* keyListener;				// 키보드 리스너
 
 	void Tick(float f);								// 한 프레임마다 호출
 	void Jump();									// 점프버튼이 눌렸을 때
