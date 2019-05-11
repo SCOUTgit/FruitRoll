@@ -37,10 +37,6 @@ bool GameScene::init()
 void GameScene::Tick(float f) {
 	DeleteObject();
 	CheckCollide(); 
-	if (health <= 0 && !end) {
-		end = true;
-		GameOver();
-	}
 }
 
 void GameScene::OnClickPause() {
@@ -100,6 +96,10 @@ bool GameScene::onTouchBegan(Touch* touch, Event* unused_event) {
 			o.second->Stop();
 		}
 		UI->stopButton->setOpacity(128);
+		if (health <= 0 && !end) {
+			end = true;
+			GameOver();
+		}
 	}
 
 	return true;
@@ -119,6 +119,10 @@ void GameScene::onTouchMoved(Touch* touch, Event* unused_event) {
 			o.second->Stop();
 		}
 		UI->stopButton->setOpacity(128);
+		if (health <= 0 && !end) {
+			end = true;
+			GameOver();
+		}
 	}
 	if (!UI->stopButton->getBoundingBox().containsPoint(touchPoint) && board1->stopping && !end) {
 		fruit->stopLable->setVisible(false);
@@ -294,6 +298,10 @@ void GameScene::CheckCollide() {
 				fruit->PlayAnimation();
 				collided = true;
 				UI->UpdateInfo((health * 100) / fullHP, score);
+				if (health <= 0 && !end) {
+					end = true;
+					GameOver();
+				}
 			}
 			if (!obstacleBoundingbox.intersectsCircle(fruit->fruitImage->getPosition(), fruit->fruitRadius) && collided) {
 				collided = false;
