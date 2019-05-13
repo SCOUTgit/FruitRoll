@@ -1,4 +1,4 @@
-#include "GameoverPopup.h"
+ï»¿#include "GameoverPopup.h"
 
 GameoverPopup * GameoverPopup::create() {
 	GameoverPopup *ret = new GameoverPopup();
@@ -22,89 +22,125 @@ bool GameoverPopup::init() {
 }
 
 void GameoverPopup::onEnter() {
-
 	Layer::onEnter();
 
 	setTouchEnabled(true);
-
-	setTouchMode(Touch::DispatchMode::ONE_BY_ONE);
+	auto listener = EventListenerTouchOneByOne::create();
+	listener->setSwallowTouches(true);
+	listener->onTouchBegan = CC_CALLBACK_2(GameoverPopup::onTouchBegan, this);
+	listener->onTouchMoved = CC_CALLBACK_2(GameoverPopup::onTouchMoved, this);
+	listener->onTouchEnded = CC_CALLBACK_2(GameoverPopup::onTouchEnded, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 }
 
-bool GameoverPopup::onTouchBegan(Touch* touch, Event* event) {
-
+bool GameoverPopup::onTouchBegan(Touch* touch, Event* unused_event) {
+	auto touchPoint = touch->getLocation();
+	
+	if (restartButton->getBoundingBox().containsPoint(touchPoint)) {
+		clickedButton = "restart";
+		restartButton->setOpacity(128);
+	}
+	else if (goMainButton->getBoundingBox().containsPoint(touchPoint)) {
+		clickedButton = "goMain";
+		goMainButton->setOpacity(128);
+	}
+	else
+		clickedButton = "";
 	return true;
 }
 
-void GameoverPopup::MakePopUp() {
+void GameoverPopup::onTouchMoved(Touch* touch, Event* unused_event) {
+	auto touchPoint = touch->getLocation();
+	
+	if (restartButton->getBoundingBox().containsPoint(touchPoint)) {
+		clickedButton = "restart";
+		restartButton->setOpacity(128);
+		goMainButton->setOpacity(255);
+	}
+	else if (goMainButton->getBoundingBox().containsPoint(touchPoint)) {
+		clickedButton = "goMain";
+		restartButton->setOpacity(255);
+		goMainButton->setOpacity(128);
+	}
+	else
+		clickedButton = "";
+}
 
-	auto winSize = Director::getInstance()->getOpenGLView()->getDesignResolutionSize();
-	auto fadeBack = LayerColor::create(Color4B(0, 0, 0, 0), winSize.width, winSize.height);
+void GameoverPopup::onTouchEnded(Touch* touch, Event *unused_event) {
+	restartButton->setOpacity(255);
+	goMainButton->setOpacity(255);
+	auto touchPoint = touch->getLocation();
+	
+	if (restartButton->getBoundingBox().containsPoint(touchPoint) && clickedButton == "restart") {
+		OnClickRestart();
+	}
+	else if (goMainButton->getBoundingBox().containsPoint(touchPoint) && clickedButton == "goMain") {
+		OnClickGoMain();
+	}
+}
+
+void GameoverPopup::MakePopUp() {
+	auto visibleSize = Director::getInstance()->getVisibleSize();
+	auto fadeBack = LayerColor::create(Color4B(0, 0, 0, 0), visibleSize.width, visibleSize.height);
 
 	this->addChild(fadeBack);
 
 	fadeBack->runAction(FadeTo::create(0.5f, 200));
 
-	// ÆË¾÷ ¹è°æ ¸¸µé±â
-	auto pauseBg = Sprite::create("images/PopUp.png");
+	auto pauseBG = Sprite::create("images/PopUp.png");
 
-	pauseBg->setPosition(Point(winSize.width / 2, winSize.height / 2));
+	pauseBG->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
+	pauseBG->setScale((visibleSize.width / pauseBG->getContentSize().width) / 2);
+	this->addChild(pauseBG);
 
-	auto BGScale = (winSize.width / pauseBg->getContentSize().width) / 2;
-	pauseBg->setScale(BGScale);
+	auto restartButtonLabel = Label::create("ë‹¤ì‹œì‹œì‘", "fonts/DungGeunMo.ttf", visibleSize.width / 10);
+	restartButtonLabel->setColor(Color3B(255, 255, 255));
 
-	auto sprite1 = Sprite::create("images/Button.png");
-	auto sprite2 = Sprite::create("images/Button.png");
-	auto spriteScale = (winSize.width / sprite1->getContentSize().width) / 7;
-	sprite1->setScale(spriteScale);
-	sprite2->setScale(spriteScale);
-	sprite1->setPosition(Point((pauseBg->getContentSize().height / 2), (pauseBg->getContentSize().height / 2) - 100));
-	sprite2->setPosition(Point((pauseBg->getContentSize().height / 2), (pauseBg->getContentSize().height / 2)));
-	pauseBg->addChild(sprite1);
-	pauseBg->addChild(sprite2);
+	restartButton = Sprite::create("images/Button.png");
+	auto buttonScale = (visibleSize.width / restartButton->getContentSize().width) / 4;
 
-	this->addChild(pauseBg);
+	restartButton->setScale(buttonScale);
+	restartButton->addChild(restartButtonLabel, 1);
+	restartButton->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
+	restartButtonLabel->setScale(0.5 / buttonScale);
+	restartButtonLabel->setPosition(restartButton->getContentSize().width * 0.5, restartButton->getContentSize().height * 0.5);
 
-	// ´Ù½Ã½ÃÀÛ ¹öÆ°
-	auto restartMenu = MenuItemFont::create("´Ù½Ã½ÃÀÛ", CC_CALLBACK_1(GameoverPopup::OnClickRestart, this));
-	restartMenu->setColor(Color3B(255, 255, 255));
-	restartMenu->setPosition(Point((pauseBg->getContentSize().height / 2), (pauseBg->getContentSize().height / 2)));
-	restartMenu->setFontNameObj("fonts/DungGeunMo.ttf");
+	this->addChild(restartButton, 1);
 
+	auto goMainButtonLabel = Label::create("ë©”ì¸í™”ë©´", "fonts/DungGeunMo.ttf", visibleSize.width / 10);
+	goMainButtonLabel->setColor(Color3B(255, 255, 255));
 
-	// ¸ŞÀÎÈ­¸é ¹öÆ°
-	auto gomainMenu = MenuItemFont::create("¸ŞÀÎÈ­¸é", CC_CALLBACK_1(GameoverPopup::OnClickGoMain, this));
-	gomainMenu->setColor(Color3B(255, 255, 255));
-	gomainMenu->setPosition(Point((pauseBg->getContentSize().height / 2), (pauseBg->getContentSize().height / 2) - 100));
-	gomainMenu->setFontNameObj("fonts/DungGeunMo.ttf");
+	goMainButton = Sprite::create("images/Button.png");
 
-	// ¸Ş´º »ı¼º
-	auto menu = Menu::create(restartMenu, gomainMenu, NULL);
-	menu->setPosition(Point::ZERO);
+	goMainButton->setScale(buttonScale);
+	goMainButton->addChild(goMainButtonLabel, 1);
+	goMainButton->setPosition(Point((visibleSize.width / 2), (visibleSize.height / 2) - visibleSize.height / 4));
+	goMainButtonLabel->setScale(0.5 / buttonScale);
+	goMainButtonLabel->setPosition(goMainButton->getContentSize().width * 0.5, goMainButton->getContentSize().height * 0.5);
 
-	pauseBg->addChild(menu, 1);
+	this->addChild(goMainButton, 1);
 
-	// È¹µæÇÑ ¹°¹æ¿ï Ãâ·Â
+	// íšë“í•œ ë¬¼ë°©ìš¸ ì¶œë ¥
 	auto scoreSprite = Sprite::create("images/Waterdrop.png");
-	scoreSprite->setScale((winSize.width / scoreSprite->getContentSize().width) / 30);
-	scoreSprite->setPosition(Point((pauseBg->getContentSize().height / 2) - 75, (pauseBg->getContentSize().height / 2) + 100));
+	scoreSprite->setScale((visibleSize.width / scoreSprite->getContentSize().width) / 20);
+	scoreSprite->setPosition(Point(visibleSize.width * 0.4, visibleSize.height * 0.75));
 
-	scoreText = ui::Text::create("", "fonts/DungGeunMo.ttf", 30);
+	scoreText = ui::Text::create("", "fonts/DungGeunMo.ttf", visibleSize.width/20);
 	scoreText->setColor(Color3B(0, 0, 0));
-	scoreText->setPosition(Point((pauseBg->getContentSize().height / 2) + 25, (pauseBg->getContentSize().height / 2) + 100));
-	pauseBg->addChild(scoreText, 1);
-	pauseBg->addChild(scoreSprite, 1);
+	scoreText->setPosition(Point(visibleSize.width * 0.55, visibleSize.height * 0.75));
+	this->addChild(scoreText, 1);
+	this->addChild(scoreSprite, 1);
 }
 
-void GameoverPopup::OnClickRestart(Ref* object) {
-	((GameScene *)this->getParent())->Resume();
+void GameoverPopup::OnClickRestart() {
 	((GameScene *)this->getParent())->Restart();
 	this->removeFromParentAndCleanup(true);
 }
 
-void GameoverPopup::OnClickGoMain(Ref* object) {
+void GameoverPopup::OnClickGoMain() {
 	((GameScene *)this->getParent())->GoMain();
 }
 
 void GameoverPopup::GetInfo(int score) {
-	scoreText->setText(to_string(score) + "°³ È¹µæ");
+	scoreText->setText(to_string(score) + "ê°œ íšë“");
 }

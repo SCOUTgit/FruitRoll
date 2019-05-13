@@ -1,11 +1,11 @@
-#include "Waterdrop.h"
+﻿#include "Waterdrop.h"
 
 
 Waterdrop::Waterdrop()
 {
 	waterdropImage = Sprite::create("images/Waterdrop.png");
 	visibleSize = Director::getInstance()->getVisibleSize();
-	auto scale = visibleSize.width / 6400;
+	auto scale = visibleSize.width / 5000;
 	waterdropImage->setScale(scale);
 	width = waterdropImage->getContentSize().width * scale;
 	height = waterdropImage->getContentSize().height * scale;

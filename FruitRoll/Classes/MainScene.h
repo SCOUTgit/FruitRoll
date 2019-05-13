@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #pragma execution_character_set("UTF-8")
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
@@ -15,23 +15,23 @@ public:
 
 	virtual bool init();
 
-	int bestScore;									// ÃÖ°íÁ¡¼ö
-	int HP;											// Ã¼·Â
-	int waterdrop;									// ¼ÒÀ¯ÇÑ ¹°¹æ¿ï
-	string fruitType;								// °úÀÏ Å¸ÀÔ
-	ui::Text* HPText;								// Ã¼·Â ÅØ½ºÆ®
-	ui::Text* waterdropText;						// ¼ÒÀ¯ÇÑ ¹°¹æ¿ï ÅØ½ºÆ®
-	ui::Text* needWaterdropText;					// Ã¼·Â°­È­¿¡ ÇÊ¿äÇÑ ¹°¹æ¿ï ÅØ½ºÆ®
-	Size visibleSize;								// È­¸é »çÀÌÁî
-	Sprite* selectedSprite;							// ¼±ÅÃÇÑ °úÀÏÀ» °¡¸®Å°´Â ½ºÇÁ¶óÀÌÆ®
-	Menu* fruitMenu;								// ¼±ÅÃÇÒ °úÀÏµéÀÌ ÀÖ´Â ¸Ş´º
-	EventListenerKeyboard* keyListener;				// Å°º¸µå ¸®½º³Ê
+	int bestScore;									// ìµœê³ ì ìˆ˜
+	int HP;											// ì²´ë ¥
+	int waterdrop;									// ì†Œìœ í•œ ë¬¼ë°©ìš¸
+	string fruitType;								// ê³¼ì¼ íƒ€ì…
+	ui::Text* HPText;								// ì²´ë ¥ í…ìŠ¤íŠ¸
+	ui::Text* waterdropText;						// ì†Œìœ í•œ ë¬¼ë°©ìš¸ í…ìŠ¤íŠ¸
+	ui::Text* needWaterdropText;					// ì²´ë ¥ê°•í™”ì— í•„ìš”í•œ ë¬¼ë°©ìš¸ í…ìŠ¤íŠ¸
+	Size visibleSize;								// í™”ë©´ ì‚¬ì´ì¦ˆ
+	Sprite* selectedSprite;							// ì„ íƒí•œ ê³¼ì¼ì„ ê°€ë¦¬í‚¤ëŠ” ìŠ¤í”„ë¼ì´íŠ¸
+	Menu* fruitMenu;								// ì„ íƒí•  ê³¼ì¼ë“¤ì´ ìˆëŠ” ë©”ë‰´
+	EventListenerKeyboard* keyListener;				// í‚¤ë³´ë“œ ë¦¬ìŠ¤ë„ˆ
 
-	void MakeBackground();							// ¹è°æ »ı¼º
-	void MakeUI();									// UI »ı¼º
-	void Start();									// °ÔÀÓ ½ÃÀÛ
-	void SelectFruit(string type);					// °úÀÏ ¼±ÅÃ
-	void UpgradeHP();								// Ã¼·Â °­È­
+	void MakeBackground();							// ë°°ê²½ ìƒì„±
+	void MakeUI();									// UI ìƒì„±
+	void Start();									// ê²Œì„ ì‹œì‘
+	void SelectFruit(string type);					// ê³¼ì¼ ì„ íƒ
+	void UpgradeHP();								// ì²´ë ¥ ê°•í™”
 
 	virtual void onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event);
 

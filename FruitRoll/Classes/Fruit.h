@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "cocos2d.h"
 
 using namespace std;
@@ -10,22 +10,21 @@ public:
 	Fruit(string type);
 	~Fruit();
 
-	bool jumping;				// Á¡ÇÁÇÏ´Â ÁßÀÎÁö Ã¼Å©
-	bool stopping;				// Á¤ÁöÇÏ´Â ÁßÀÎÁö Ã¼Å©
-	float fruitRadius;			// °úÀÏÀÇ ¹İÁö¸§
-	float width;				// °úÀÏÀÇ °¡·Î ±æÀÌ
-	float height;				// °úÀÏÀÇ ¼¼·Î ±æÀÌ
-	string fruitType;			// °úÀÏÀÇ Á¾·ù
-	Label* stopLable;			// ½ºÅ¾ ·¹ÀÌºí
-	Sprite* fruitImage;			// °úÀÏÀÇ ÀÌ¹ÌÁö
-	Animation* fruitAnimation;	// °úÀÏ¾Ö´Ï¸ŞÀÌ¼Ç
+	bool jumping;				// ì í”„í•˜ëŠ” ì¤‘ì¸ì§€ ì²´í¬
+	bool stopping;				// ì •ì§€í•˜ëŠ” ì¤‘ì¸ì§€ ì²´í¬
+	float fruitRadius;			// ê³¼ì¼ì˜ ë°˜ì§€ë¦„
+	float width;				// ê³¼ì¼ì˜ ê°€ë¡œ ê¸¸ì´
+	float height;				// ê³¼ì¼ì˜ ì„¸ë¡œ ê¸¸ì´
+	string fruitType;			// ê³¼ì¼ì˜ ì¢…ë¥˜
+	Label* stopLable;			// ìŠ¤íƒ‘ ë ˆì´ë¸”
+	Sprite* fruitImage;			// ê³¼ì¼ì˜ ì´ë¯¸ì§€
+	Animation* fruitAnimation;	// ê³¼ì¼ì• ë‹ˆë©”ì´ì…˜
 
-	void MakeSprite();			// ¾Ö´Ï¸ŞÀÌÆ® »ı¼º
-	void Jump();				// Á¡ÇÁÇÏ±â
-	void JumpEnd();				// Á¡ÇÁ ³¡³»±â
-	void Stop();				// Á¤ÁöÇÏ±â
-	void StopEnd();				// Á¤Áö ³¡³»±â
-	void Rotate();				// ±¸¸£±â
-	void PlayAnimation();		// Ãæµ¹ ½Ã ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
-	void Restart();				// ´Ù½Ã½ÃÀÛ
+	void MakeSprite();			// ì• ë‹ˆë©”ì´íŠ¸ ìƒì„±
+	void Jump();				// ì í”„í•˜ê¸°
+	void JumpEnd();				// ì í”„ ëë‚´ê¸°
+	void Stop();				// ì •ì§€í•˜ê¸°
+	void StopEnd();				// ì •ì§€ ëë‚´ê¸°
+	void Rotate();				// êµ¬ë¥´ê¸°
+	void PlayAnimation();		// ì¶©ëŒ ì‹œ ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰
 };

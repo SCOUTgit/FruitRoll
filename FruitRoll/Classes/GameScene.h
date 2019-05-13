@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "cocos2d.h"
 #include "Fruit.h"
 #include "Obstacle.h"
@@ -20,36 +20,35 @@ public:
 
 	virtual bool init();
 
-	int score;										// Á¡¼ö
-	int money;										// È¹µæÇÑ ¹°¹æ¿ï
-	int fullHP;										// ¿ø·¡ Ã¼·Â
-	int health;										// Ã¼·Â
-	bool collided;									// Ãæµ¹ ÁßÀÎÁö Ã¼Å©
-	bool paused;									// °ÔÀÓÀÌ ¸ØÃè´ÂÁö Ã¼Å©
-	bool end;										// °ÔÀÓÀÌ ³¡³µ´ÂÁö Ã¼Å©
-	Fruit* fruit;									// °úÀÏ
-	Waterdrop* waterdrop;							// ¹°¹æ¿ï
-	unordered_map<string, Obstacle*> obstacleMap;	// Àå¾Ö¹° 
-	Board* board1;									// ³ª¹«ÆÇÀÚ1
-	Board* board2;									// ³ª¹«ÆÇÀÚ2
-	GameSceneUI* UI;								// °ÔÀÓ¾À UI
-	EventListenerTouchOneByOne* listener;			// ÅÍÄ¡ ¸®½º³Ê
-	EventListenerKeyboard* keyListener;				// Å°º¸µå ¸®½º³Ê
+	int score;										// ì ìˆ˜
+	int money;										// íšë“í•œ ë¬¼ë°©ìš¸
+	int fullHP;										// ì›ë˜ ì²´ë ¥
+	int health;										// ì²´ë ¥
+	bool collided;									// ì¶©ëŒ ì¤‘ì¸ì§€ ì²´í¬
+	bool paused;									// ê²Œì„ì´ ë©ˆì·„ëŠ”ì§€ ì²´í¬
+	bool end;										// ê²Œì„ì´ ëë‚¬ëŠ”ì§€ ì²´í¬
+	Fruit* fruit;									// ê³¼ì¼
+	Waterdrop* waterdrop;							// ë¬¼ë°©ìš¸
+	unordered_map<string, Obstacle*> obstacleMap;	// ì¥ì• ë¬¼
+	Board* board1;									// ë‚˜ë¬´íŒì1
+	Board* board2;									// ë‚˜ë¬´íŒì2
+	GameSceneUI* UI;								// ê²Œì„ì”¬ UI
+	EventListenerTouchOneByOne* listener;			// í„°ì¹˜ ë¦¬ìŠ¤ë„ˆ
+	EventListenerKeyboard* keyListener;				// í‚¤ë³´ë“œ ë¦¬ìŠ¤ë„ˆ
 
-	void Tick(float f);								// ÇÑ ÇÁ·¹ÀÓ¸¶´Ù È£Ãâ
-	void Jump();									// Á¡ÇÁ¹öÆ°ÀÌ ´­·ÈÀ» ¶§
-	void MakeBackground();							// ¹è°æ »ı¼º
-	void MakeUI();									// UI »ı¼º
-	void MakeFruit();								// °úÀÏ »ı¼º
-	void MakeObject();								// ¿ÀºêÁ§Æ® »ı¼º
-	void MoveObject();								// ¿ÀºêÁ§Æ® ÀÌµ¿
-	void DeleteObject();							// ¿ÀºêÁ§Æ® »èÁ¦
-	void CheckCollide();							// Ãæµ¹ Ã¼Å©
-	void OnClickPause();							// °ÔÀÓ ÀÏ½Ã Á¤Áö
-	void GameOver();								// °ÔÀÓ ¿À¹ö
-	void Restart();									// ´Ù½Ã ½ÃÀÛ
-	void Resume();									// µ¹¾Æ°¡±â
-	void GoMain();									// ¸ŞÀÎÈ­¸é
+	void Tick(float f);								// í•œ í”„ë ˆì„ë§ˆë‹¤ í˜¸ì¶œ
+	void MakeBackground();							// ë°°ê²½ ìƒì„±
+	void MakeUI();									// UI ìƒì„±
+	void MakeFruit();								// ê³¼ì¼ ìƒì„±
+	void MakeObject();								// ì˜¤ë¸Œì íŠ¸ ìƒì„±
+	void MoveObject();								// ì˜¤ë¸Œì íŠ¸ ì´ë™
+	void DeleteObject();							// ì˜¤ë¸Œì íŠ¸ ì‚­ì œ
+	void CheckCollide();							// ì¶©ëŒ ì²´í¬
+	void OnClickPause();							// ê²Œì„ ì¼ì‹œ ì •ì§€
+	void GameOver();								// ê²Œì„ ì˜¤ë²„
+	void Restart();									// ë‹¤ì‹œ ì‹œì‘
+	void Resume();									// ëŒì•„ê°€ê¸°
+	void GoMain();									// ë©”ì¸í™”ë©´
 
 	virtual void onEnter();
 	virtual void onExit();

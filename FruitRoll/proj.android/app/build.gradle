@@ -9,8 +9,8 @@ android {
         applicationId "com.scout.fruitroll"
         minSdkVersion PROP_MIN_SDK_VERSION
         targetSdkVersion PROP_TARGET_SDK_VERSION
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "1.3"
 
         externalNativeBuild {
             if (PROP_BUILD_TYPE == 'ndk-build') {
@@ -67,14 +67,17 @@ android {
     }
 
     signingConfigs {
-
-       release {
+        release {
             if (project.hasProperty("RELEASE_STORE_FILE")) {
                 storeFile file(RELEASE_STORE_FILE)
                 storePassword RELEASE_STORE_PASSWORD
                 keyAlias RELEASE_KEY_ALIAS
                 keyPassword RELEASE_KEY_PASSWORD
             }
+            keyAlias 'upload'
+            keyPassword '011031'
+            storeFile file('C:/Users/AERO14/Documents/keystores/upload-keystore.jks')
+            storePassword 'kpkpop369741'
         }
     }
 
@@ -89,14 +92,13 @@ android {
             if (project.hasProperty("RELEASE_STORE_FILE")) {
                 signingConfig signingConfigs.release
             }
-
             externalNativeBuild {
                 ndkBuild {
                     arguments 'NDK_DEBUG=0'
                 }
             }
+            signingConfig signingConfigs.release
         }
-
         debug {
             debuggable true
             jniDebuggable true
@@ -124,6 +126,6 @@ android.applicationVariants.all { variant ->
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':libcocos2dx')
 }

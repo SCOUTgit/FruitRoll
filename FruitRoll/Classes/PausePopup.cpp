@@ -1,111 +1,166 @@
-#include "PausePopup.h"
+ï»¿#include "PausePopup.h"
 
 PausePopup * PausePopup::create() {
-	PausePopup *ret = new PausePopup();
-	if (ret && ret->init())
-	{
-		ret->autorelease();
-	}
+    PausePopup *ret = new PausePopup();
+    if (ret && ret->init())
+    {
+        ret->autorelease();
+    }
 
-	else
-	{
-		CC_SAFE_DELETE(ret);
-	}
-	return ret;
+    else
+    {
+        CC_SAFE_DELETE(ret);
+    }
+    return ret;
 }
 
 bool PausePopup::init() {
 
-	MakePopUp();
+    MakePopUp();
 
-	return true;
+    return true;
 }
 
 void PausePopup::onEnter() {
+    Layer::onEnter();
 
-	Layer::onEnter();
-
-	setTouchEnabled(true);
-
-	setTouchMode(Touch::DispatchMode::ONE_BY_ONE);
+    setTouchEnabled(true);
+	auto listener = EventListenerTouchOneByOne::create();
+	listener->setSwallowTouches(true);
+	listener->onTouchBegan = CC_CALLBACK_2(PausePopup::onTouchBegan, this);
+	listener->onTouchMoved = CC_CALLBACK_2(PausePopup::onTouchMoved, this);
+	listener->onTouchEnded = CC_CALLBACK_2(PausePopup::onTouchEnded, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
 }
 
-bool PausePopup::onTouchBegan(Touch* touch, Event* event) {
-
+bool PausePopup::onTouchBegan(Touch* touch, Event* unused_event) {
+	auto touchPoint = touch->getLocation();
+	if (resumeButton->getBoundingBox().containsPoint(touchPoint)) {
+		clickedButton = "resume";
+		resumeButton->setOpacity(128);
+	}
+	else if (restartButton->getBoundingBox().containsPoint(touchPoint)) {
+		clickedButton = "restart";
+		restartButton->setOpacity(128);
+	}
+	else if (goMainButton->getBoundingBox().containsPoint(touchPoint)) {
+		clickedButton = "goMain";
+		goMainButton->setOpacity(128);
+	}
+	else
+		clickedButton = "";
 	return true;
+}
+
+void PausePopup::onTouchMoved(Touch* touch, Event* unused_event) {
+	auto touchPoint = touch->getLocation();
+	if (resumeButton->getBoundingBox().containsPoint(touchPoint)) {
+		clickedButton = "resume";
+		resumeButton->setOpacity(128);
+		restartButton->setOpacity(255);
+		goMainButton->setOpacity(255);
+
+	}
+	else if (restartButton->getBoundingBox().containsPoint(touchPoint)) {
+		clickedButton = "restart";
+		resumeButton->setOpacity(255);
+		restartButton->setOpacity(128);
+		goMainButton->setOpacity(255);
+	}
+	else if (goMainButton->getBoundingBox().containsPoint(touchPoint)) {
+		clickedButton = "goMain";
+		resumeButton->setOpacity(255);
+		restartButton->setOpacity(255);
+		goMainButton->setOpacity(128);
+	}
+	else
+		clickedButton = "";
+}
+
+void PausePopup::onTouchEnded(Touch* touch, Event *unused_event) {
+	resumeButton->setOpacity(255);
+	restartButton->setOpacity(255);
+	goMainButton->setOpacity(255);
+	auto touchPoint = touch->getLocation();
+	if (resumeButton->getBoundingBox().containsPoint(touchPoint) && clickedButton == "resume") {
+		OnClickResume();
+	}
+	else if (restartButton->getBoundingBox().containsPoint(touchPoint) && clickedButton == "restart") {
+		OnClickRestart();
+	}
+	else if (goMainButton->getBoundingBox().containsPoint(touchPoint) && clickedButton == "goMain") {
+		OnClickGoMain();
+	}
 }
 
 void PausePopup::MakePopUp() {
 
-	auto winSize = Director::getInstance()->getOpenGLView()->getDesignResolutionSize();
-	auto fadeBack = LayerColor::create(Color4B(0, 0, 0, 0), winSize.width, winSize.height);
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    auto fadeBack = LayerColor::create(Color4B(0, 0, 0, 0), visibleSize.width, visibleSize.height);
 
-	this->addChild(fadeBack);
+    this->addChild(fadeBack);
 
-	fadeBack->runAction(FadeTo::create(0.5f, 200));
+    fadeBack->runAction(FadeTo::create(0.5f, 200));
 
-	// ÆË¾÷ ¹è°æ ¸¸µé±â
-	auto pauseBg = Sprite::create("images/PopUp.png");
+	auto pauseBG = Sprite::create("images/PopUp.png");
 
-	pauseBg->setPosition(Point(winSize.width / 2, winSize.height / 2));
-
-	auto BGScale = (winSize.width / pauseBg->getContentSize().width) / 2;
-	pauseBg->setScale(BGScale);
-
-	auto sprite1 = Sprite::create("images/Button.png");
-	auto sprite2 = Sprite::create("images/Button.png");
-	auto sprite3 = Sprite::create("images/Button.png");
-	auto spriteScale = (winSize.width / sprite1->getContentSize().width) / 7;
-	sprite1->setScale(spriteScale);
-	sprite2->setScale(spriteScale);
-	sprite3->setScale(spriteScale);
-	sprite1->setPosition(Point((pauseBg->getContentSize().height / 2), (pauseBg->getContentSize().height / 2) + 100));
-	sprite2->setPosition(Point((pauseBg->getContentSize().height / 2), (pauseBg->getContentSize().height / 2)));
-	sprite3->setPosition(Point((pauseBg->getContentSize().height / 2), (pauseBg->getContentSize().height / 2) - 100));
-	pauseBg->addChild(sprite1);
-	pauseBg->addChild(sprite2);
-	pauseBg->addChild(sprite3);
-
-	this->addChild(pauseBg);
-
-	// µ¹¾Æ°¡±â ¹öÆ°
-	auto resumeMenu = MenuItemFont::create("µ¹¾Æ°¡±â", CC_CALLBACK_1(PausePopup::OnClickResume, this));
-	resumeMenu->setColor(Color3B(255, 255, 255));
-	resumeMenu->setPosition(Point((pauseBg->getContentSize().height / 2), (pauseBg->getContentSize().height / 2) + 100));
-	resumeMenu->setFontNameObj("fonts/DungGeunMo.ttf");
+	pauseBG->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
+	pauseBG->setScale((visibleSize.width / pauseBG->getContentSize().width) / 2);
+	this->addChild(pauseBG);
 
 
-	// ´Ù½Ã½ÃÀÛ ¹öÆ°
-	auto restartMenu = MenuItemFont::create("´Ù½Ã½ÃÀÛ", CC_CALLBACK_1(PausePopup::OnClickRestart, this));
-	restartMenu->setColor(Color3B(255, 255, 255));
-	restartMenu->setPosition(Point((pauseBg->getContentSize().height / 2), (pauseBg->getContentSize().height / 2)));
-	restartMenu->setFontNameObj("fonts/DungGeunMo.ttf");
+	auto resumeButtonLabel = Label::create("ëŒì•„ê°€ê¸°", "fonts/DungGeunMo.ttf", visibleSize.width / 10);
+	resumeButtonLabel->setColor(Color3B(255, 255, 255));
 
+	resumeButton = Sprite::create("images/Button.png");
+	
+	auto buttonScale = (visibleSize.width / resumeButton->getContentSize().width) / 4;
 
-	// ¸ÞÀÎÈ­¸é ¹öÆ°
-	auto gomainMenu = MenuItemFont::create("¸ÞÀÎÈ­¸é", CC_CALLBACK_1(PausePopup::OnClickGoMain, this));
-	gomainMenu->setColor(Color3B(255, 255, 255));
-	gomainMenu->setPosition(Point((pauseBg->getContentSize().height / 2), (pauseBg->getContentSize().height / 2) - 100));
-	gomainMenu->setFontNameObj("fonts/DungGeunMo.ttf");
+	resumeButton->setScale(buttonScale);
+	resumeButton->addChild(resumeButtonLabel, 1);
+	resumeButton->setPosition(Point((visibleSize.width / 2), (visibleSize.height / 2) + visibleSize.height / 4));
+	resumeButtonLabel->setScale(0.5 / buttonScale);
+	resumeButtonLabel->setPosition(resumeButton->getContentSize().width * 0.5, resumeButton->getContentSize().height * 0.5);
+	
+	this->addChild(resumeButton,1);
 
-	// ¸Þ´º »ý¼º
-	auto menu = Menu::create(resumeMenu, restartMenu, gomainMenu, NULL);
-	menu->setPosition(Point::ZERO);
+	auto restartButtonLabel = Label::create("ë‹¤ì‹œì‹œìž‘", "fonts/DungGeunMo.ttf", visibleSize.width / 10);
+	restartButtonLabel->setColor(Color3B(255, 255, 255));
 
-	pauseBg->addChild(menu, 1);
+	restartButton = Sprite::create("images/Button.png");
+
+	restartButton->setScale(buttonScale);
+	restartButton->addChild(restartButtonLabel, 1);
+	restartButton->setPosition(Point(visibleSize.width / 2, visibleSize.height / 2));
+	restartButtonLabel->setScale(0.5 / buttonScale);
+	restartButtonLabel->setPosition(restartButton->getContentSize().width * 0.5, restartButton->getContentSize().height * 0.5);
+
+	this->addChild(restartButton, 1);
+
+	auto goMainButtonLabel = Label::create("ë©”ì¸í™”ë©´", "fonts/DungGeunMo.ttf", visibleSize.width / 10);
+	goMainButtonLabel->setColor(Color3B(255, 255, 255));
+
+	goMainButton = Sprite::create("images/Button.png");
+
+	goMainButton->setScale(buttonScale);
+	goMainButton->addChild(goMainButtonLabel, 1);
+	goMainButton->setPosition(Point((visibleSize.width / 2), (visibleSize.height / 2) - visibleSize.height / 4));
+	goMainButtonLabel->setScale(0.5 / buttonScale);
+	goMainButtonLabel->setPosition(goMainButton->getContentSize().width * 0.5, goMainButton->getContentSize().height * 0.5);
+
+	this->addChild(goMainButton, 1);
 }
 
-void PausePopup::OnClickResume(Ref* object) {
-	((GameScene *)this->getParent())->Resume();
-	this->removeFromParentAndCleanup(true);
+void PausePopup::OnClickResume() {
+    ((GameScene *)this->getParent())->Resume();
+    this->removeFromParentAndCleanup(true);
 }
 
-void PausePopup::OnClickRestart(Ref* object) {
-	((GameScene *)this->getParent())->Resume();
-	((GameScene *)this->getParent())->Restart();
-	this->removeFromParentAndCleanup(true);
+void PausePopup::OnClickRestart() {
+    ((GameScene *)this->getParent())->Restart();
+    this->removeFromParentAndCleanup(true);
 }
 
-void PausePopup::OnClickGoMain(Ref* object) {
-	((GameScene *)this->getParent())->GoMain();
+void PausePopup::OnClickGoMain() {
+    ((GameScene *)this->getParent())->GoMain();
 }

@@ -1,4 +1,4 @@
-#include "GameSceneUI.h"
+ï»¿#include "GameSceneUI.h"
 
 
 GameSceneUI::GameSceneUI() {
@@ -12,51 +12,55 @@ GameSceneUI::~GameSceneUI() {
 }
 
 void GameSceneUI::MakeButton() {
-	// Á¡ÇÁ ¹öÆ° ¸¸µé±â
-	auto jumpButtonLabel = Label::create("Jump", "fonts/DungGeunMo.ttf", 200);
+	// ì í”„ ë²„íŠ¼ ë§Œë“¤ê¸°
+	auto jumpButtonLabel = Label::create("Jump", "fonts/DungGeunMo.ttf", visibleSize.width / 8);
 	jumpButtonLabel->setColor(Color3B(255, 255, 255));
 
 	jumpButton = Sprite::create("images/Button.png");
 
-	auto jumpButtonScale = (visibleSize.width / jumpButton->getContentSize().width) / 6;
+	auto jumpButtonScale = (visibleSize.width / jumpButton->getContentSize().width) / 4;
 
 	jumpButton->setScale(jumpButtonScale);
-	jumpButton->setPosition(jumpButton->getContentSize().width * jumpButtonScale * 0.75, jumpButton->getContentSize().height * jumpButtonScale);
 	jumpButton->addChild(jumpButtonLabel, 1);
-	jumpButtonLabel->setPosition(jumpButtonLabel->getContentSize().width, jumpButtonLabel->getContentSize().height);
+	jumpButton->setPosition(jumpButton->getContentSize().width * jumpButtonScale * 0.5, jumpButton->getContentSize().height * jumpButtonScale * 0.5);
+	jumpButtonLabel->setScale(0.5 / jumpButtonScale);
+	jumpButtonLabel->setPosition(jumpButton->getContentSize().width * 0.5, jumpButton->getContentSize().height * 0.5);
 
-	// ½ºÅ¾ ¹öÆ° ¸¸µé±â
-	auto StopButtonLabel = Label::create("Stop", "fonts/DungGeunMo.ttf", 200);
-	StopButtonLabel->setColor(Color3B(255, 255, 255));
+	// ìŠ¤íƒ‘ ë²„íŠ¼ ë§Œë“¤ê¸°
+	auto stopButtonLabel = Label::create("Stop", "fonts/DungGeunMo.ttf", visibleSize.width / 8);
+	stopButtonLabel->setColor(Color3B(255, 255, 255));
 
 	stopButton = Sprite::create("images/Button.png");
 
-	auto StopButtonScale = (visibleSize.width / stopButton->getContentSize().width) / 6;
+	auto stopButtonScale = (visibleSize.width / stopButton->getContentSize().width) / 4;
 
-	stopButton->setScale(StopButtonScale);
-	stopButton->setPosition(visibleSize.width - stopButton->getContentSize().width * StopButtonScale * 0.75, stopButton->getContentSize().height * StopButtonScale);
-	stopButton->addChild(StopButtonLabel, 1);
-	StopButtonLabel->setPosition(StopButtonLabel->getContentSize().width, StopButtonLabel->getContentSize().height);
+	stopButton->setScale(stopButtonScale);
+	stopButton->addChild(stopButtonLabel, 1);
+	stopButton->setPosition(visibleSize.width - stopButton->getContentSize().width * stopButtonScale * 0.5, stopButton->getContentSize().height * stopButtonScale * 0.5);
+	stopButtonLabel->setScale(0.5 / stopButtonScale);
+	stopButtonLabel->setPosition(stopButton->getContentSize().width * 0.5, stopButton->getContentSize().height * 0.5);
 
-	// ÀÏ½ÃÁ¤Áö ¹öÆ° ¸¸µé±â
+	// ì¼ì‹œì •ì§€ ë²„íŠ¼ ë§Œë“¤ê¸°
 	pauseButton = MenuItemImage::create("images/PauseButton.png", "images/PauseButton.png");
 
 	auto pauseButtonScale = (visibleSize.width / pauseButton->getContentSize().width) / 15;
-	
+
 	pauseButton->setScale(pauseButtonScale);
 	pauseButton->setPosition(visibleSize.width * 0.9, visibleSize.height * 0.9);
 }
 
 void GameSceneUI::MakeInfo() {
-	healthLabel = Label::create("HP","fonts/DungGeunMo.ttf", 100);
+	healthLabel = Label::create("HP","fonts/DungGeunMo.ttf", visibleSize.width / 12);
 	healthLabel->setColor(Color3B(0, 0, 0));
 	healthLabel->setPosition(visibleSize.width * 0.1, visibleSize.height * 0.9);
-	
+
 	healthBar = ui::LoadingBar::create("images/HealthBar.png", 100);
+	healthBar->setScale(visibleSize.width / 1280);
 	healthBar->setPosition(Point(visibleSize.width * 0.3, visibleSize.height * 0.9));
 	healthBar->setDirection(ui::LoadingBar::Direction::LEFT);
-	
+
 	healthBarBackground = Sprite::create("images/HealthBarBackground.png");
+	healthBarBackground->setScale(visibleSize.width / 1280);
 	healthBarBackground->setPosition(Point(visibleSize.width * 0.3, visibleSize.height * 0.9));
 	healthBarBackground->setOpacity(200);
 
@@ -64,7 +68,7 @@ void GameSceneUI::MakeInfo() {
 	scoreSprite->setScale((visibleSize.width / scoreSprite->getContentSize().width) / 20);
 	scoreSprite->setPosition(-visibleSize.width / 30, 50);
 
-	scoreText = ui::Text::create("x0", "fonts/DungGeunMo.ttf", 75);
+	scoreText = ui::Text::create("x0", "fonts/DungGeunMo.ttf", visibleSize.width / 14);
 	scoreText->setColor(Color3B(0, 0, 0));
 	scoreText->setPosition(Point(visibleSize.width * 0.6, visibleSize.height * 0.9));
 	scoreText->addChild(scoreSprite);

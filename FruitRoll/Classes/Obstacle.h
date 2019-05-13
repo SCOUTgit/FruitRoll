@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "cocos2d.h"
 #include "AudioEngine.h"
 
@@ -11,19 +11,19 @@ public:
 	Obstacle(string type);
 	~Obstacle();
 
-	string name;											// Àå¾Ö¹°ÀÇ Á¾·ù
-	Sprite* obstacleImage;									// Àå¾Ö¹°ÀÇ ÀÌ¹ÌÁö
-	bool stopping;											// Á¤ÁöÇÏ´Â ÁßÀÎÁö Ã¼Å©
-	bool moving;											// ¿òÁ÷ÀÌ´Â ÁßÀÎÁö Ã¼Å©
-	float width;											// Àå¾Ö¹°ÀÇ °¡·Î ±æÀÌ
-	float height;											// Àå¾Ö¹°ÀÇ ¼¼·Î ±æÀÌ
-	Size visibleSize;										// ÇØ»óµµ
+	string name;											// ì¥ì• ë¬¼ì˜ ì¢…ë¥˜
+	Sprite* obstacleImage;									// ì¥ì• ë¬¼ì˜ ì´ë¯¸ì§€
+	bool stopping;											// ì •ì§€í•˜ëŠ” ì¤‘ì¸ì§€ ì²´í¬
+	bool moving;											// ì›€ì§ì´ëŠ” ì¤‘ì¸ì§€ ì²´í¬
+	float width;											// ì¥ì• ë¬¼ì˜ ê°€ë¡œ ê¸¸ì´
+	float height;											// ì¥ì• ë¬¼ì˜ ì„¸ë¡œ ê¸¸ì´
+	Size visibleSize;										// í•´ìƒë„
 
-	void Stop();											// Á¤ÁöÇÏ±â
-	void StopEnd();											// Á¤Áö ³¡³»±â
-	void Remove();											// ½ºÆùÀå¼Ò·Î ÀÌµ¿ÇÏ±â
-	void Move();											// ¾ÕÀ¸·Î ¿òÁ÷ÀÌ±â
-	void Fall();											// ¶³¾îÁö´Â Àå¾Ö¹°ÀÏ °æ¿ì ¶³¾îÁö±â
-	void PlayEffect();										// ¶³¾îÁö°í ¼Ò¸® ½ÇÇà
-	bool CheckNeedDelete();									// »èÁ¦ÇØ¾ßÇÏ´ÂÁö È®ÀÎ
+	void Stop();											// ì •ì§€í•˜ê¸°
+	void StopEnd();											// ì •ì§€ ëë‚´ê¸°
+	void Remove();											// ìŠ¤í°ì¥ì†Œë¡œ ì´ë™í•˜ê¸°
+	void Move();											// ì•ìœ¼ë¡œ ì›€ì§ì´ê¸°
+	void Fall();											// ë–¨ì–´ì§€ëŠ” ì¥ì• ë¬¼ì¼ ê²½ìš° ë–¨ì–´ì§€ê¸°
+	void PlayEffect();										// ë–¨ì–´ì§€ê³  ì†Œë¦¬ ì‹¤í–‰
+	bool CheckNeedDelete();								// ì‚­ì œí•´ì•¼í•˜ëŠ”ì§€ í™•ì¸
 };

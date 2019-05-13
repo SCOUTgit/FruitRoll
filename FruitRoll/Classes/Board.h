@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "cocos2d.h"
 
 using namespace std;
@@ -10,16 +10,16 @@ public:
 	Board();
 	~Board();
 
-	Sprite* boardImage;			// ³ª¹«ÆÇÀÚ ÀÌ¹ÌÁö
-	bool stopping;				// Á¤ÁöÇÏ´Â ÁßÀÎÁö Ã¼Å©
-	float width;				// ³ª¹«ÆÇÀÚÀÇ °¡·Î ±æÀÌ
-	float height;				// ³ª¹«ÆÇÀÚÀÇ ¼¼·Î ±æÀÌ
-	Size visibleSize;			// ÇØ»óµµ
+	Sprite* boardImage;			// ë‚˜ë¬´íŒì ì´ë¯¸ì§€
+	bool stopping;				// ì •ì§€í•˜ëŠ” ì¤‘ì¸ì§€ ì²´í¬
+	float width;				// ë‚˜ë¬´íŒìì˜ ê°€ë¡œ ê¸¸ì´
+	float height;				// ë‚˜ë¬´íŒìì˜ ì„¸ë¡œ ê¸¸ì´
+	Size visibleSize;			// í•´ìƒë„
 
-	void Move();				//¾ÕÀ¸·Î ¿òÁ÷ÀÌ±â
-	void Remove();				// ½ºÆùÀå¼Ò·Î ÀÌµ¿ÇÏ±â
-	void Stop();				// Á¤ÁöÇÏ±â
-	void StopEnd();				// Á¤Áö ³¡³»±â
-	bool CheckNeedDelete();		// »èÁ¦ÇØ¾ßÇÏ´ÂÁö È®ÀÎÇÏ±â
+	void Move();				//ì•ìœ¼ë¡œ ì›€ì§ì´ê¸°
+	void Remove();				// ìŠ¤í°ì¥ì†Œë¡œ ì´ë™í•˜ê¸°
+	void Stop();				// ì •ì§€í•˜ê¸°
+	void StopEnd();				// ì •ì§€ ëë‚´ê¸°
+	bool CheckNeedDelete();		// ì‚­ì œí•´ì•¼í•˜ëŠ”ì§€ í™•ì¸í•˜ê¸°
 };
 

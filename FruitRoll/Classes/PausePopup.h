@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #pragma execution_character_set("UTF-8")
 #include "cocos2d.h"
 #include "GameScene.h"
@@ -13,12 +13,18 @@ public:
 
     bool init();
 
-    virtual void onEnter();
+	string clickedButton;
+	Sprite* resumeButton;					
+	Sprite* restartButton;					
+	Sprite* goMainButton;		
 
-    bool onTouchBegan(Touch* touch, Event* event);
+    virtual void onEnter();
+	virtual bool onTouchBegan(Touch* touch, Event* unused_event);
+	virtual void onTouchMoved(Touch* touch, Event* unused_event);
+	virtual void onTouchEnded(Touch* touch, Event *unused_event);
 
 	void MakePopUp();
-	void OnClickResume(Ref* object);
-	void OnClickRestart(Ref* object);
-	void OnClickGoMain(Ref* object);
+	void OnClickResume();
+	void OnClickRestart();
+	void OnClickGoMain();
 };

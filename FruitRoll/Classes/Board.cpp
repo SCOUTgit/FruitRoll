@@ -1,4 +1,4 @@
-#include "Board.h"
+﻿#include "Board.h"
 
 
 Board::Board()
@@ -6,7 +6,7 @@ Board::Board()
 	stopping = false;
 	boardImage = Sprite::create("images/Board.png");
 	visibleSize = Director::getInstance()->getVisibleSize();
-	auto scale = visibleSize.width / 3200;
+	auto scale = visibleSize.width / 2000;
 	boardImage->setScale(scale);
 	width = boardImage->getContentSize().width * scale;
 	height = boardImage->getContentSize().height * scale;
@@ -27,7 +27,7 @@ void Board::Move() {
 }
 
 void Board::Remove() {
-	boardImage->setPosition(width * 1.5, height * 1.5);
+	boardImage->setPosition(width * 1.5, height);
 }
 
 void Board::Stop() {

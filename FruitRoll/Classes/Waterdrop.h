@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "cocos2d.h"
 
 using namespace std;
@@ -10,16 +10,16 @@ public:
 	Waterdrop();
 	~Waterdrop();
 
-	Sprite* waterdropImage;									// ¹°¹æ¿ï ÀÌ¹ÌÁö
-	bool stopping;											// Á¤ÁöÇÏ´Â ÁßÀÎÁö Ã¼Å©
-	bool moving;											// ¿òÁ÷ÀÌ´Â ÁßÀÎÁö Ã¼Å©
-	float width;											// ¹°¹æ¿ïÀÇ °¡·Î ±æÀÌ
-	float height;											// ¹°¹æ¿ïÀÇ ¼¼·Î ±æÀÌ
-	Size visibleSize;										// ÇØ»óµµ
+	Sprite* waterdropImage;									// ë¬¼ë°©ìš¸ ì´ë¯¸ì§€
+	bool stopping;											// ì •ì§€í•˜ëŠ” ì¤‘ì¸ì§€ ì²´í¬
+	bool moving;											// ì›€ì§ì´ëŠ” ì¤‘ì¸ì§€ ì²´í¬
+	float width;											// ë¬¼ë°©ìš¸ì˜ ê°€ë¡œ ê¸¸ì´
+	float height;											// ë¬¼ë°©ìš¸ì˜ ì„¸ë¡œ ê¸¸ì´
+	Size visibleSize;										// í•´ìƒë„
 
-	void Remove();											// ½ºÆùÀå¼Ò·Î ÀÌµ¿ÇÏ±â
-	void Move();											// ¾ÕÀ¸·Î ¿òÁ÷ÀÌ±â
-	void Stop();											// Á¤ÁöÇÏ±â
-	void StopEnd();											// Á¤Áö ³¡³»±â
-	bool CheckNeedDelete();									// »èÁ¦ÇØ¾ßÇÏ´ÂÁö È®ÀÎ
+	void Remove();											// ìŠ¤í°ì¥ì†Œë¡œ ì´ë™í•˜ê¸°
+	void Move();											// ì•ìœ¼ë¡œ ì›€ì§ì´ê¸°
+	void Stop();											// ì •ì§€í•˜ê¸°
+	void StopEnd();											// ì •ì§€ ëë‚´ê¸°
+	bool CheckNeedDelete();								// ì‚­ì œí•´ì•¼í•˜ëŠ”ì§€ í™•ì¸
 };

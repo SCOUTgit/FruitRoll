@@ -1,26 +1,26 @@
-#pragma once
+ï»¿#pragma once
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
 
 using namespace std;
 USING_NS_CC;
- 
+
 class GameSceneUI
 {
 public:
 	GameSceneUI();
 	~GameSceneUI();
 
-	Sprite* jumpButton;						// Á¡ÇÁ ¹öÆ°
-	Sprite* stopButton;						// ½ºÅ¾ ¹öÆ°
-	MenuItemImage* pauseButton;				// ÀÏ½ÃÁ¤Áö ¸Ş´º¾ÆÀÌÅÛ
-	Label* healthLabel;						// Ã¼·Â
-	ui::LoadingBar* healthBar;				// Ã¼·Â °ÔÀÌÁö 
-	Sprite* healthBarBackground;			// Ã¼·Â °ÔÀÌÁö ¹è°æ 
-	ui::Text* scoreText;					// È¹µæÇÑ ¹°¹æ¿ï
-	Size visibleSize;						// ÇØ»óµµ
+	Sprite* jumpButton;						// ì í”„ ë²„íŠ¼
+	Sprite* stopButton;						// ìŠ¤íƒ‘ ë²„íŠ¼
+	MenuItemImage* pauseButton;				// ì¼ì‹œì •ì§€ ë©”ë‰´ì•„ì´í…œ
+	Label* healthLabel;						// ì²´ë ¥
+	ui::LoadingBar* healthBar;				// ì²´ë ¥ ê²Œì´ì§€
+	Sprite* healthBarBackground;			// ì²´ë ¥ ê²Œì´ì§€ ë°°ê²½
+	ui::Text* scoreText;					// íšë“í•œ ë¬¼ë°©ìš¸
+	Size visibleSize;						// í•´ìƒë„
 
-	void MakeButton();						// ¹öÆ° »ı¼º
-	void MakeInfo();						// Á¤º¸ È­¸é »ı¼º
-	void UpdateInfo(int hp, int score);		// Á¤º¸ ¾÷µ¥ÀÌÆ®
+	void MakeButton();						// ë²„íŠ¼ ìƒì„±
+	void MakeInfo();						// ì •ë³´ í™”ë©´ ìƒì„±
+	void UpdateInfo(int hp, int score);		// ì •ë³´ ì—…ë°ì´íŠ¸
 };

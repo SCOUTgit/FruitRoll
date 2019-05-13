@@ -1,11 +1,11 @@
-#include "Obstacle.h"
+﻿#include "Obstacle.h"
 
 Obstacle::Obstacle(string name)
 {
 	this->name = name;
 	obstacleImage = Sprite::create("images/" + name + ".png");
 	visibleSize = Director::getInstance()->getVisibleSize();
-	auto scale = visibleSize.width / 2400;
+	auto scale = visibleSize.width / 1800;
 	obstacleImage->setScale(scale);
 	width = obstacleImage->getContentSize().width * scale;
 	height = obstacleImage->getContentSize().height * scale;

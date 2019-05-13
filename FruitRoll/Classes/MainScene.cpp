@@ -1,196 +1,196 @@
-#include "MainScene.h"
+ï»¿#include "MainScene.h"
 
 Scene* MainScene::createScene() {
-	auto scene = Scene::create();
-	auto layer = MainScene::create();
-	
-	scene->addChild(layer);
-	return scene;
+    auto scene = Scene::create();
+    auto layer = MainScene::create();
+
+    scene->addChild(layer);
+    return scene;
 }
 
 bool MainScene::init()
 {
-	if (!Layer::init())
-	{
-		return false;
-	}
+    if (!Layer::init())
+    {
+        return false;
+    }
 
-	keyListener = EventListenerKeyboard::create();
-	keyListener->onKeyReleased = CC_CALLBACK_2(MainScene::onKeyReleased, this);
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
+    keyListener = EventListenerKeyboard::create();
+    keyListener->onKeyReleased = CC_CALLBACK_2(MainScene::onKeyReleased, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(keyListener, this);
 
-	visibleSize = Director::getInstance()->getVisibleSize();
-	MakeBackground();
-	MakeUI();
-	return true;
+    visibleSize = Director::getInstance()->getVisibleSize();
+    MakeBackground();
+    MakeUI();
+    return true;
 }
 
 void MainScene::MakeBackground() {
-	experimental::AudioEngine::play2d("sounds/MainTheme.mp3", true);
-	auto backgroundImage = Sprite::create("images/BackgroundFridge.png");
-	backgroundImage->setScale(visibleSize.width / backgroundImage->getContentSize().width, visibleSize.height / backgroundImage->getContentSize().height);
-	backgroundImage->setAnchorPoint(Point::ZERO);
-	this->addChild(backgroundImage, 0);
+    experimental::AudioEngine::play2d("sounds/MainTheme.mp3", true);
+    auto backgroundImage = Sprite::create("images/BackgroundFridge.png");
+    backgroundImage->setScale(visibleSize.width / backgroundImage->getContentSize().width, visibleSize.height / backgroundImage->getContentSize().height);
+    backgroundImage->setAnchorPoint(Point::ZERO);
+    this->addChild(backgroundImage, 0);
 }
 
 void MainScene::MakeUI() {
-	bestScore = UserDefault::getInstance()->getIntegerForKey("bestScore", 0);
-	waterdrop = UserDefault::getInstance()->getIntegerForKey("waterdrop", 0);
-	HP = UserDefault::getInstance()->getIntegerForKey("HP", 10);
+    bestScore = UserDefault::getInstance()->getIntegerForKey("bestScore", 0);
+    waterdrop = UserDefault::getInstance()->getIntegerForKey("waterdrop", 0);
+    HP = UserDefault::getInstance()->getIntegerForKey("HP", 10);
+    fruitType = "Apple";
+    UserDefault::getInstance()->setStringForKey("selectedFruit", fruitType);
 
-	// ÃÖ°íÁ¡¼ö ·¹ÀÌºí »ı¼º
-	auto bestScoreLabel = Label::create("ÃÖ°íÁ¡¼ö:" + to_string(bestScore), "fonts/DungGeunMo.ttf", 70);
-	bestScoreLabel->setColor(Color3B(0, 0, 0));
-	bestScoreLabel->setPosition(visibleSize.width * 0.25, visibleSize.height * 0.8);
+    // ìµœê³ ì ìˆ˜ ë ˆì´ë¸” ìƒì„±
+    auto bestScoreLabel = Label::create("ìµœê³ ì ìˆ˜:" + to_string(bestScore), "fonts/DungGeunMo.ttf", visibleSize.width / 16);
+    bestScoreLabel->setColor(Color3B(0, 0, 0));
+    bestScoreLabel->setPosition(visibleSize.width * 0.25, visibleSize.height * 0.8);
 
-	this->addChild(bestScoreLabel, 1);
+    this->addChild(bestScoreLabel, 1);
 
-	// ¼ÒÀ¯ÇÏ°í ÀÖ´Â ¹°¹æ¿ï Ç¥½Ã
-	auto waterdropSprite = Sprite::create("images/Waterdrop.png");
-	waterdropSprite->setScale((visibleSize.width / waterdropSprite->getContentSize().width) / 20);
-	waterdropSprite->setPosition(-visibleSize.width / 30, 50);
+    // ì†Œìœ í•˜ê³  ìˆëŠ” ë¬¼ë°©ìš¸ í‘œì‹œ
+    auto waterdropSprite = Sprite::create("images/Waterdrop.png");
+    waterdropSprite->setScale((visibleSize.width / waterdropSprite->getContentSize().width) / 20);
+    waterdropSprite->setPosition(-visibleSize.width / 30, visibleSize.height / 16);
 
-	waterdropText = ui::Text::create("x" + to_string(waterdrop), "fonts/DungGeunMo.ttf", 100);
-	waterdropText->setColor(Color3B(0, 0, 0));
-	waterdropText->setPosition(Point(visibleSize.width * 0.25, visibleSize.height * 0.5));
-	waterdropText->addChild(waterdropSprite);
+    waterdropText = ui::Text::create("x" + to_string(waterdrop), "fonts/DungGeunMo.ttf", visibleSize.width / 12);
+    waterdropText->setColor(Color3B(0, 0, 0));
+    waterdropText->setPosition(Point(visibleSize.width * 0.25, visibleSize.height * 0.5));
+    waterdropText->addChild(waterdropSprite);
 
-	this->addChild(waterdropText, 1);
+    this->addChild(waterdropText, 1);
 
-	// Ã¼·Â Ç¥½Ã
-	auto HPLabel = Label::create("HP", "fonts/DungGeunMo.ttf", 100);
-	HPLabel->setColor(Color3B(255, 0, 0));
-	HPLabel->setPosition(Point(75, 150));
+    // ì²´ë ¥ í‘œì‹œ
+    auto HPLabel = Label::create("HP", "fonts/DungGeunMo.ttf", visibleSize.width / 16);
+    HPLabel->setColor(Color3B(255, 0, 0));
+    HPLabel->setPosition(Point(visibleSize.width / 18, visibleSize.width / 10));
 
-	HPText = ui::Text::create(to_string(HP), "fonts/DungGeunMo.ttf", 100);
-	HPText->setColor(Color3B(0, 0, 0));
-	HPText->setPosition(Point(visibleSize.width * 0.1, visibleSize.height * 0.15));
-	HPText->addChild(HPLabel);
+    HPText = ui::Text::create(to_string(HP), "fonts/DungGeunMo.ttf", visibleSize.width / 16);
+    HPText->setColor(Color3B(0, 0, 0));
+    HPText->setPosition(Point(visibleSize.width * 0.1, visibleSize.height * 0.15));
+    HPText->addChild(HPLabel);
 
-	this->addChild(HPText, 1);
+    this->addChild(HPText, 1);
 
-	// ÇÊ¿äÇÑ ¹°¹æ¿ï °¹¼ö
-	if (HP >= 100) {
-		needWaterdropText = ui::Text::create("ÃÖ´ë Ã¼·Â", "fonts/DungGeunMo.ttf", 50);
-	}
-	else{
-		needWaterdropText = ui::Text::create("ÇÊ¿äÇÑ ¹°¹æ¿ï" + to_string(HP * 2) + "°³", "fonts/DungGeunMo.ttf", 35);
-		
-		// °­È­ ¹öÆ°
-		auto upgradeHPMenuItem = MenuItemFont::create("°­È­ÇÏ±â", CC_CALLBACK_0(MainScene::UpgradeHP, this));
-		upgradeHPMenuItem->setColor(Color3B(0, 0, 0));
-		upgradeHPMenuItem->setPosition(Point(visibleSize.width * 0.3, visibleSize.height * 0.15));
-		upgradeHPMenuItem->setFontNameObj("fonts/DungGeunMo.ttf");
-		upgradeHPMenuItem->setScale(1.5);
+    // í•„ìš”í•œ ë¬¼ë°©ìš¸ ê°¯ìˆ˜
+    if (HP >= 100) {
+        needWaterdropText = ui::Text::create("ìµœëŒ€ ì²´ë ¥", "fonts/DungGeunMo.ttf", visibleSize.width / 20);
+    }
+    else{
+        needWaterdropText = ui::Text::create("í•„ìš”í•œ ë¬¼ë°©ìš¸" + to_string(HP * 2) + "ê°œ", "fonts/DungGeunMo.ttf", visibleSize.width / 36);
 
-		auto upgradeButtonSprite = Sprite::create("images/Button.png");
-		upgradeButtonSprite->setScale(upgradeHPMenuItem->getContentSize().width / upgradeButtonSprite->getContentSize().width);
-		upgradeButtonSprite->setPosition(Point(visibleSize.width * 0.3, visibleSize.height * 0.15));
-		upgradeButtonSprite->setScale(upgradeHPMenuItem->getBoundingBox().getMinX() / upgradeButtonSprite->getContentSize().width, 
-			upgradeHPMenuItem->getBoundingBox().getMinY() / upgradeButtonSprite->getContentSize().height);
+        // ê°•í™” ë²„íŠ¼
+        auto upgradeHPMenuItem = MenuItemFont::create("ê°•í™”í•˜ê¸°", CC_CALLBACK_0(MainScene::UpgradeHP, this));
+        upgradeHPMenuItem->setColor(Color3B(255, 255, 255));
+        upgradeHPMenuItem->setPosition(Point(visibleSize.width * 0.3, visibleSize.height * 0.15));
+        upgradeHPMenuItem->setFontNameObj("fonts/DungGeunMo.ttf");
+        upgradeHPMenuItem->setScale(visibleSize.width / 800);
 
-		auto menu = Menu::create(upgradeHPMenuItem, NULL);
-		menu->setPosition(Point::ZERO);
+        auto upgradeButtonSprite = Sprite::create("images/Button.png");
+        upgradeButtonSprite->setScale(upgradeHPMenuItem->getContentSize().width / upgradeButtonSprite->getContentSize().width);
+        upgradeButtonSprite->setPosition(Point(visibleSize.width * 0.3, visibleSize.height * 0.15));
+        upgradeButtonSprite->setScale(upgradeHPMenuItem->getBoundingBox().getMinX() / upgradeButtonSprite->getContentSize().width,
+                                      upgradeHPMenuItem->getBoundingBox().getMinY() / upgradeButtonSprite->getContentSize().height);
 
-		this->addChild(menu, 2);
-		this->addChild(upgradeButtonSprite, 1);
-	}
-	needWaterdropText->setColor(Color3B(0, 0, 0));
-	needWaterdropText->setPosition(Point(visibleSize.width * 0.3, visibleSize.height * 0.25));
+        auto menu = Menu::create(upgradeHPMenuItem, NULL);
+        menu->setPosition(Point::ZERO);
 
-	this->addChild(needWaterdropText, 1);
-	
-	// °úÀÏµé ½ºÇÁ¶óÀÌÆ®
-	// »ç°ú
-	auto appleSprite = Sprite::create("images/Apple.png");
-	auto appleMenuItem = MenuItemSprite::create(Sprite::createWithTexture(appleSprite->getTexture(), Rect(0, 0, appleSprite->getContentSize().width, appleSprite->getContentSize().height / 2)),
-		Sprite::createWithTexture(appleSprite->getTexture(), Rect(0, appleSprite->getContentSize().height / 2, appleSprite->getContentSize().width, appleSprite->getContentSize().height / 2)));
-	appleMenuItem->setCallback(CC_CALLBACK_0(MainScene::SelectFruit,this,"apple"));
-	appleMenuItem->setScale(0.25);
+        this->addChild(menu, 2);
+        this->addChild(upgradeButtonSprite, 1);
+    }
+    needWaterdropText->setColor(Color3B(0, 0, 0));
+    needWaterdropText->setPosition(Point(visibleSize.width * 0.3, visibleSize.height * 0.25));
 
-	// ¿À·»Áö
-	auto orangeSprite = Sprite::create("images/Orange.png");
-	auto orangeMenuItem = MenuItemSprite::create(Sprite::createWithTexture(orangeSprite->getTexture(), Rect(0, 0, orangeSprite->getContentSize().width, orangeSprite->getContentSize().height / 2)),
-		Sprite::createWithTexture(orangeSprite->getTexture(), Rect(0, orangeSprite->getContentSize().height / 2, orangeSprite->getContentSize().width, orangeSprite->getContentSize().height / 2)));
-	orangeMenuItem->setCallback(CC_CALLBACK_0(MainScene::SelectFruit, this, "orange"));
-	orangeMenuItem->setScale(0.25);
+    this->addChild(needWaterdropText, 1);
 
-	// ¹è
-	auto pearSprite = Sprite::create("images/Pear.png");
-	auto pearMenuItem = MenuItemSprite::create(Sprite::createWithTexture(pearSprite->getTexture(), Rect(0, 0, pearSprite->getContentSize().width, pearSprite->getContentSize().height / 2)),
-		Sprite::createWithTexture(pearSprite->getTexture(), Rect(0, pearSprite->getContentSize().height / 2, pearSprite->getContentSize().width, pearSprite->getContentSize().height / 2)));
-	pearMenuItem->setCallback(CC_CALLBACK_0(MainScene::SelectFruit, this, "pear"));
-	pearMenuItem->setScale(0.25);
+    // ê³¼ì¼ë“¤ ìŠ¤í”„ë¼ì´íŠ¸
+    // ì‚¬ê³¼
+    auto appleSprite = Sprite::create("images/Apple.png");
+    auto appleMenuItem = MenuItemSprite::create(Sprite::createWithTexture(appleSprite->getTexture(), Rect(0, 0, appleSprite->getContentSize().width, appleSprite->getContentSize().height / 2)),
+                                                Sprite::createWithTexture(appleSprite->getTexture(), Rect(0, appleSprite->getContentSize().height / 2, appleSprite->getContentSize().width, appleSprite->getContentSize().height / 2)));
+    appleMenuItem->setCallback(CC_CALLBACK_0(MainScene::SelectFruit,this,"apple"));
+    appleMenuItem->setScale((visibleSize.width / appleSprite->getContentSize().width) / 10);
 
-	fruitMenu = Menu::create(appleMenuItem, orangeMenuItem, pearMenuItem, NULL);
-	fruitMenu->setPosition(Point(visibleSize.width * 0.76, visibleSize.height * 0.76));
-	fruitMenu->alignItemsHorizontally();
+    // ì˜¤ë Œì§€
+    auto orangeSprite = Sprite::create("images/Orange.png");
+    auto orangeMenuItem = MenuItemSprite::create(Sprite::createWithTexture(orangeSprite->getTexture(), Rect(0, 0, orangeSprite->getContentSize().width, orangeSprite->getContentSize().height / 2)),
+                                                 Sprite::createWithTexture(orangeSprite->getTexture(), Rect(0, orangeSprite->getContentSize().height / 2, orangeSprite->getContentSize().width, orangeSprite->getContentSize().height / 2)));
+    orangeMenuItem->setCallback(CC_CALLBACK_0(MainScene::SelectFruit, this, "orange"));
+    orangeMenuItem->setScale((visibleSize.width / orangeSprite->getContentSize().width) / 10);
 
-	this->addChild(fruitMenu, 1);
+    // ë°°
+    auto pearSprite = Sprite::create("images/Pear.png");
+    auto pearMenuItem = MenuItemSprite::create(Sprite::createWithTexture(pearSprite->getTexture(), Rect(0, 0, pearSprite->getContentSize().width, pearSprite->getContentSize().height / 2)),
+                                               Sprite::createWithTexture(pearSprite->getTexture(), Rect(0, pearSprite->getContentSize().height / 2, pearSprite->getContentSize().width, pearSprite->getContentSize().height / 2)));
+    pearMenuItem->setCallback(CC_CALLBACK_0(MainScene::SelectFruit, this, "pear"));
+    pearMenuItem->setScale((visibleSize.width / pearSprite->getContentSize().width) / 10);
 
-	selectedSprite = Sprite::create("images/Arrow.png");
-	selectedSprite->setPosition(fruitMenu->getPositionX() - 150, fruitMenu->getPositionY() - 150);
-	selectedSprite->setScale(0.5);
-	UserDefault::getInstance()->setStringForKey("selectedFruit", "Apple");
+    fruitMenu = Menu::create(appleMenuItem, orangeMenuItem, pearMenuItem, NULL);
+    fruitMenu->setPosition(Point(visibleSize.width * 0.76, visibleSize.height * 0.76));
+    fruitMenu->alignItemsHorizontally();
 
-	auto action = MoveBy::create(0.5, Point(0, 20));
-	auto seq = Sequence::create(action, action->reverse(), NULL);
-	selectedSprite->runAction(RepeatForever::create(seq));
+    this->addChild(fruitMenu, 1);
 
-	this->addChild(selectedSprite , 1);
+    selectedSprite = Sprite::create("images/Arrow.png");
+    selectedSprite->setPosition(fruitMenu->getPositionX() - visibleSize.width / 9.5, fruitMenu->getPositionY() - visibleSize.width / 10);
+    selectedSprite->setScale((visibleSize.width / selectedSprite->getContentSize().width) / 16);
+    UserDefault::getInstance()->setStringForKey("selectedFruit", "Apple");
 
-	// °ÔÀÓ ½ÃÀÛ
-	auto startMenuItem = MenuItemFont::create("°ÔÀÓ½ÃÀÛ", CC_CALLBACK_0(MainScene::Start, this));
-	startMenuItem->setColor(Color3B(0, 0, 0));
-	startMenuItem->setPosition(Point(visibleSize.width * 0.75, visibleSize.height * 0.25));
-	startMenuItem->setFontNameObj("fonts/DungGeunMo.ttf");
-	startMenuItem->setScale(3);
+    auto action = MoveBy::create(0.5, Point(0, 20));
+    auto seq = Sequence::create(action, action->reverse(), NULL);
+    selectedSprite->runAction(RepeatForever::create(seq));
 
-	auto menu = Menu::create(startMenuItem, NULL);
-	menu->setPosition(Point::ZERO);
+    this->addChild(selectedSprite , 1);
 
-	this->addChild(menu, 2);	
+    // ê²Œì„ ì‹œì‘
+    auto startMenuItem = MenuItemFont::create("ê²Œì„ì‹œì‘", CC_CALLBACK_0(MainScene::Start, this));
+    startMenuItem->setColor(Color3B(0, 0, 0));
+    startMenuItem->setPosition(Point(visibleSize.width * 0.75, visibleSize.height * 0.25));
+    startMenuItem->setFontNameObj("fonts/DungGeunMo.ttf");
+    startMenuItem->setScale(visibleSize.width / 480);
+
+    auto menu = Menu::create(startMenuItem, NULL);
+    menu->setPosition(Point::ZERO);
+
+    this->addChild(menu, 2);
 }
 
 void MainScene::SelectFruit(string type) {
-	if (type == "apple") {
-		fruitType = "apple";
-		selectedSprite->setPosition(fruitMenu->getPositionX() - 150, fruitMenu->getPositionY() - 150);
-		UserDefault::getInstance()->setStringForKey("selectedFruit", "Apple");
 
-	}
-	else if (type == "orange") {
-		fruitType = "orange";
-		selectedSprite->setPosition(fruitMenu->getPositionX(), fruitMenu->getPositionY() - 150);
-		UserDefault::getInstance()->setStringForKey("selectedFruit", "Orange");
-	}
-	else if (type == "pear") {
-		fruitType = "pear";
-		selectedSprite->setPosition(fruitMenu->getPositionX() + 150, fruitMenu->getPositionY() - 150);
-		UserDefault::getInstance()->setStringForKey("selectedFruit", "Pear");
-	}
+    if (type == "apple") {
+        fruitType = "Apple";
+		selectedSprite->setPosition(fruitMenu->getPositionX() - visibleSize.width / 9.5, fruitMenu->getPositionY() - visibleSize.width / 10);
+    }
+    else if (type == "orange") {
+        fruitType = "Orange";
+		selectedSprite->setPosition(fruitMenu->getPositionX(), fruitMenu->getPositionY() - visibleSize.width / 10);
+    }
+    else if (type == "pear") {
+        fruitType = "Pear";
+		selectedSprite->setPosition(fruitMenu->getPositionX() + visibleSize.width / 9.5, fruitMenu->getPositionY() - visibleSize.width / 10);
+    }
+    UserDefault::getInstance()->setStringForKey("selectedFruit", fruitType);
 }
 
 void MainScene::UpgradeHP() {
-	if (waterdrop >= HP * 2) {
-		waterdrop -= HP * 2;
-		waterdropText->setText(to_string(waterdrop));
-		HP += 5;
-		HPText->setText(to_string(HP));
-		needWaterdropText->setText("ÇÊ¿äÇÑ ¹°¹æ¿ï" + to_string(HP * 2) + "°³");
-		UserDefault::getInstance()->setIntegerForKey("HP", HP);
-		UserDefault::getInstance()->setIntegerForKey("waterdrop", waterdrop);
-	}
+    if (waterdrop >= HP * 2) {
+        waterdrop -= HP * 2;
+        waterdropText->setText(to_string(waterdrop));
+        HP += 5;
+        HPText->setText(to_string(HP));
+        needWaterdropText->setText("í•„ìš”í•œ ë¬¼ë°©ìš¸" + to_string(HP * 2) + "ê°œ");
+        UserDefault::getInstance()->setIntegerForKey("HP", HP);
+        UserDefault::getInstance()->setIntegerForKey("waterdrop", waterdrop);
+    }
 }
 
 void MainScene::Start() {
-	_eventDispatcher->removeEventListener(keyListener);
-	experimental::AudioEngine::stopAll();
-	UserDefault::getInstance()->flush();
-	Director::getInstance()->replaceScene(GameScene::createScene());
+    _eventDispatcher->removeEventListener(keyListener);
+    experimental::AudioEngine::stopAll();
+    UserDefault::getInstance()->flush();
+    Director::getInstance()->replaceScene(GameScene::createScene());
 }
 
 void MainScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event) {
-	if (keyCode == EventKeyboard::KeyCode::KEY_BACK)
-		Director::getInstance()->end();
+    if (keyCode == EventKeyboard::KeyCode::KEY_BACK)
+        Director::getInstance()->end();
 }

@@ -1,4 +1,4 @@
-#include "GameScene.h"
+ï»¿#include "GameScene.h"
 
 Scene* GameScene::createScene() {
 	auto scene = Scene::create();
@@ -15,7 +15,7 @@ bool GameScene::init()
 		return false;
 	}
 
-	health = UserDefault::getInstance()->getIntegerForKey("HP");
+	health = UserDefault::getInstance()->getIntegerForKey("HP", 10);
 	score = 0;
 	fullHP = health;
 	end = false;
@@ -36,7 +36,7 @@ bool GameScene::init()
 
 void GameScene::Tick(float f) {
 	DeleteObject();
-	CheckCollide(); 
+	CheckCollide();
 }
 
 void GameScene::OnClickPause() {
@@ -162,21 +162,21 @@ void GameScene::onKeyReleased(EventKeyboard::KeyCode keyCode, Event* event) {
 		OnClickPause();
 }
 
-// ¹è°æ Ãß°¡
+// ë°°ê²½ ì¶”ê°€
 void GameScene::MakeBackground() {
-	// sceneType Á¤ÇÏ±â
+	// sceneType ì •í•˜ê¸°
 	string type;
 	srand(time(NULL));
 	int n = rand() % 2;
 	switch (n) {
-	case 0:
-		type = "FridgeStage";
-		break;
-	case 1:
-		type = "KitchenStage";
-		break;
+		case 0:
+			type = "FridgeStage";
+			break;
+		case 1:
+			type = "KitchenStage";
+			break;
 	}
-	auto backgroundImage = Sprite::create("images\\" + type + ".png");
+	auto backgroundImage = Sprite::create("images/" + type + ".png");
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	backgroundImage->setScale(visibleSize.width / backgroundImage->getContentSize().width, visibleSize.height / backgroundImage->getContentSize().height);
 	backgroundImage->setAnchorPoint(Point::ZERO);
@@ -198,7 +198,7 @@ void GameScene::MakeUI() {
 	this->addChild(menu, 100);
 }
 
-// °úÀÏ »ý¼º
+// ê³¼ì¼ ìƒì„±
 void GameScene::MakeFruit() {
 	string fruitType = UserDefault::getInstance()->getStringForKey("selectedFruit");
 	fruit = new Fruit(fruitType);
@@ -207,7 +207,7 @@ void GameScene::MakeFruit() {
 	fruit->Rotate();
 }
 
-// ¿ÀºêÁ§Æ®(Àå¾Ö¹°, ¹°¹æ¿ï) »ý¼º
+// ì˜¤ë¸Œì íŠ¸(ìž¥ì• ë¬¼, ë¬¼ë°©ìš¸) ìƒì„±
 void GameScene::MakeObject() {
 	waterdrop = new Waterdrop();
 	this->addChild(waterdrop->waterdropImage, 5);
@@ -222,7 +222,7 @@ void GameScene::MakeObject() {
 
 	board1 = new Board();
 	board2 = new Board();
-	board1->boardImage->setPosition(board1->width * 0.5, board1->height * 1.5);
+	board1->boardImage->setPositionX(board1->width * 0.5);
 	this->addChild(board1->boardImage, 1);
 	this->addChild(board2->boardImage, 1);
 }
@@ -232,29 +232,29 @@ void GameScene::MoveObject() {
 	int r = rand() % 5;
 	switch (r)
 	{
-	case 0:
-		waterdrop->StopEnd();
-		break;
-	case 1:
-		obstacleMap["Bottle"]->StopEnd();
-		break;
-	case 2:
-		obstacleMap["Coke"]->StopEnd();
-		break;
-	case 3:
-		obstacleMap["Fork"]->StopEnd();
-		obstacleMap["Fork"]->Fall();
-		break;
-	case 4:
-		obstacleMap["Knife"]->StopEnd();
-		obstacleMap["Knife"]->Fall();
-		break;
-	default:
-		break;
+		case 0:
+			waterdrop->StopEnd();
+			break;
+		case 1:
+			obstacleMap["Bottle"]->StopEnd();
+			break;
+		case 2:
+			obstacleMap["Coke"]->StopEnd();
+			break;
+		case 3:
+			obstacleMap["Fork"]->StopEnd();
+			obstacleMap["Fork"]->Fall();
+			break;
+		case 4:
+			obstacleMap["Knife"]->StopEnd();
+			obstacleMap["Knife"]->Fall();
+			break;
+		default:
+			break;
 	}
 }
 
-// ¿ÀºêÁ§Æ® ÀÚµ¿»èÁ¦
+// ì˜¤ë¸Œì íŠ¸ ìžë™ì‚­ì œ
 void GameScene::DeleteObject() {
 	if (waterdrop->CheckNeedDelete()) {
 		waterdrop->Stop();
@@ -276,7 +276,7 @@ void GameScene::DeleteObject() {
 	}
 }
 
-// Ãæµ¹ Ã¼Å©
+// ì¶©ëŒ ì²´í¬
 void GameScene::CheckCollide() {
 	auto waterdropBoundingbox = waterdrop->waterdropImage->getBoundingBox();
 	if (waterdropBoundingbox.intersectsCircle(fruit->fruitImage->getPosition(), fruit->fruitRadius)) {
@@ -285,7 +285,8 @@ void GameScene::CheckCollide() {
 		waterdrop->Stop();
 		MoveObject();
 		score++;
-		health++;
+		if(fullHP>health)
+		    health++;
 		UI->UpdateInfo((health * 100) / fullHP, score);
 	}
 
@@ -310,11 +311,6 @@ void GameScene::CheckCollide() {
 	}
 }
 
-void GameScene::Jump() {
-	if (!fruit->jumping)
-		fruit->Jump();
-}
-
 void GameScene::Resume() {
 	experimental::AudioEngine::resumeAll();
 
@@ -331,24 +327,7 @@ void GameScene::Resume() {
 
 void GameScene::Restart() {
 	experimental::AudioEngine::stopAll();
-	experimental::AudioEngine::play2d("sounds/BGM.mp3", true);
-	health = fullHP;
-	score = 0;
-	collided = false;
-	end = false;
-
-	fruit->Restart();
-	board1->boardImage->setPosition(board1->width * 0.5, board1->height * 1.5);
-	board2->Remove();
-	waterdrop->Remove();
-	waterdrop->Stop();
-	for (pair<string, Obstacle*> o : obstacleMap) {
-		o.second->Stop();
-		o.second->Remove();
-	}
-	MoveObject();
-	UI->UpdateInfo(100, score);
-	paused = false;
+	Director::getInstance()->replaceScene(GameScene::createScene());
 }
 
 void GameScene::GameOver() {
@@ -374,11 +353,11 @@ void GameScene::GameOver() {
 		if (o.second->moving)
 			o.second->obstacleImage->pause();
 	}
-	
+
 	auto gopu = GameoverPopup::create();
 	gopu->GetInfo(score);
 	this->addChild(gopu, 110);
-	
+
 	int waterdropScore = score + UserDefault::getInstance()->getIntegerForKey("waterdrop");
 	UserDefault::getInstance()->setIntegerForKey("waterdrop", waterdropScore);
 
