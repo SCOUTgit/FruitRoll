@@ -126,7 +126,8 @@ void GameScene::onTouchMoved(Touch* touch, Event* unused_event) {
 	}
 	if (!UI->stopButton->getBoundingBox().containsPoint(touchPoint) && board1->stopping && !end) {
 		fruit->stopLable->setVisible(false);
-		fruit->StopEnd();
+        if(!fruit->jumping)
+            fruit->StopEnd();
 		board1->StopEnd();
 		board2->StopEnd();
 		if (waterdrop->moving)
@@ -143,7 +144,8 @@ void GameScene::onTouchEnded(Touch* touch, Event *unused_event) {
 	auto touchPoint = touch->getLocation();
 	if (board1->stopping && !end) {
 		fruit->stopLable->setVisible(false);
-		fruit->StopEnd();
+		if(!fruit->jumping)
+			fruit->StopEnd();
 		board1->StopEnd();
 		board2->StopEnd();
 		if (waterdrop->moving)
