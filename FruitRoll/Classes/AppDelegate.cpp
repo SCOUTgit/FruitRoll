@@ -95,11 +95,17 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // Set the design resolution
 	auto frameSize = glview->getFrameSize();
+	
+	float width, height;
 	if (frameSize.width / 16 < frameSize.height / 9) {
-		designResolutionSize.setSize(frameSize.width, (frameSize.width / 16) * 9);
+		width = frameSize.width;
+		height = frameSize.width / 16) * 9;
+		designResolutionSize.setSize(width, height);
 	}
 	else {
-		designResolutionSize.setSize((frameSize.height / 9) * 16, frameSize.height);
+		width = frameSize.height / 9 * 16;
+		height = frameSize.height;
+		designResolutionSize.setSize(width, height);
 	}
     glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::SHOW_ALL);
 	
