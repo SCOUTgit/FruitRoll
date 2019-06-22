@@ -71,10 +71,10 @@ void GameScene::onEnter() {
 }
 
 void GameScene::onExit() {
+	Layer::onExit();
 	_eventDispatcher->removeEventListener(listener);
 	_eventDispatcher->removeEventListener(keyListener);
 	experimental::AudioEngine::uncache("sounds/Waterdrop.mp3");
-	Layer::onExit();
 }
 
 bool GameScene::onTouchBegan(Touch* touch, Event* unused_event) {
@@ -107,6 +107,7 @@ bool GameScene::onTouchBegan(Touch* touch, Event* unused_event) {
 
 void GameScene::onTouchMoved(Touch* touch, Event* unused_event) {
 	auto touchPoint = touch->getLocation();
+	
 	if (UI->stopButton->getBoundingBox().containsPoint(touchPoint) && !fruit->jumping && !board1->stopping) {
 		health--;
 		UI->UpdateInfo((health * 100) / fullHP, score);
@@ -115,23 +116,29 @@ void GameScene::onTouchMoved(Touch* touch, Event* unused_event) {
 		board1->Stop();
 		board2->Stop();
 		waterdrop->Stop();
+		
 		for (pair<string, Obstacle*> o : obstacleMap) {
 			o.second->Stop();
 		}
+		
 		UI->stopButton->setOpacity(128);
 		if (health <= 0 && !end) {
 			end = true;
 			GameOver();
 		}
 	}
+	
 	if (!UI->stopButton->getBoundingBox().containsPoint(touchPoint) && board1->stopping && !end) {
 		fruit->stopLable->setVisible(false);
+		
         if(!fruit->jumping)
             fruit->StopEnd();
 		board1->StopEnd();
 		board2->StopEnd();
+		
 		if (waterdrop->moving)
 			waterdrop->StopEnd();
+		
 		for (pair<string, Obstacle*> o : obstacleMap) {
 			if (o.second->moving)
 				o.second->StopEnd();
@@ -142,12 +149,16 @@ void GameScene::onTouchMoved(Touch* touch, Event* unused_event) {
 
 void GameScene::onTouchEnded(Touch* touch, Event *unused_event) {
 	auto touchPoint = touch->getLocation();
+	
 	if (board1->stopping && !end) {
 		fruit->stopLable->setVisible(false);
+		
 		if(!fruit->jumping)
 			fruit->StopEnd();
+		
 		board1->StopEnd();
 		board2->StopEnd();
+		
 		if (waterdrop->moving)
 			waterdrop->StopEnd();
 		for (pair<string, Obstacle*> o : obstacleMap) {
@@ -155,6 +166,7 @@ void GameScene::onTouchEnded(Touch* touch, Event *unused_event) {
 				o.second->StopEnd();
 		}
 	}
+	
 	UI->jumpButton->setOpacity(255);
 	UI->stopButton->setOpacity(255);
 }
@@ -178,6 +190,7 @@ void GameScene::MakeBackground() {
 			type = "KitchenStage";
 			break;
 	}
+	
 	auto backgroundImage = Sprite::create("images/" + type + ".png");
 	auto visibleSize = Director::getInstance()->getVisibleSize();
 	backgroundImage->setScale(visibleSize.width / backgroundImage->getContentSize().width, visibleSize.height / backgroundImage->getContentSize().height);
@@ -232,6 +245,7 @@ void GameScene::MakeObject() {
 void GameScene::MoveObject() {
 	srand(time(NULL));
 	int r = rand() % 5;
+	
 	switch (r)
 	{
 		case 0:
@@ -263,6 +277,7 @@ void GameScene::DeleteObject() {
 		waterdrop->Remove();
 		MoveObject();
 	}
+	
 	for (pair<string, Obstacle*> obstacle : obstacleMap) {
 		if (obstacle.second->CheckNeedDelete()) {
 			obstacle.second->Stop();
@@ -270,9 +285,11 @@ void GameScene::DeleteObject() {
 			MoveObject();
 		}
 	}
+	
 	if (board1->CheckNeedDelete()) {
 		board1->Remove();
 	}
+	
 	if (board2->CheckNeedDelete()) {
 		board2->Remove();
 	}
