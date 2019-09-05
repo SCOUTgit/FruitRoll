@@ -12,21 +12,22 @@ public:
     static GameoverPopup * create();
 
     bool init();
+    
+    virtual void onEnter();
+    virtual bool onTouchBegan(Touch* touch, Event* unused_event);
+    virtual void onTouchMoved(Touch* touch, Event* unused_event);
+    virtual void onTouchEnded(Touch* touch, Event *unused_event);
+    
+    void MakePopUp();
+    void OnClickRestart();
+    void OnClickGoMain();
+    void GetInfo(int score);
+
+public:
 
 	string clickedButton;
 	Sprite* restartButton;
 	Sprite* goMainButton;
-
-	virtual void onEnter();
-	virtual bool onTouchBegan(Touch* touch, Event* unused_event);
-	virtual void onTouchMoved(Touch* touch, Event* unused_event);
-	virtual void onTouchEnded(Touch* touch, Event *unused_event);
-
-
-	void MakePopUp();
-	void OnClickRestart();
-	void OnClickGoMain();
-	void GetInfo(int score);
 
 	ui::Text* scoreText;
 };
