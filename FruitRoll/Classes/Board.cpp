@@ -1,8 +1,9 @@
 ﻿#include "Board.h"
 
 
-Board::Board()
+Board::Board(float moveTime)
 {
+	this->moveTime = moveTime;
 	stopping = false;
 	boardImage = Sprite::create("images/Board.png");
 	visibleSize = Director::getInstance()->getVisibleSize();
@@ -20,7 +21,7 @@ Board::~Board()
 }
 
 void Board::Move() {
-	auto action = MoveBy::create(1, Point(-visibleSize.width / 1.6, 0));
+	auto action = MoveBy::create(moveTime, Point(-visibleSize.width / 1.6, 0));
 	auto rf = RepeatForever::create(action);
 	rf->setTag(0);
 	boardImage->runAction(rf);
@@ -35,8 +36,9 @@ void Board::Stop() {
 	stopping = true;
 }
 
-void Board::StopEnd() {
+void Board::StopEnd(float moveTime) {
 	stopping = false;
+	this->moveTime = moveTime;
 	Move();
 }
 

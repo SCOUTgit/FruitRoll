@@ -19,7 +19,24 @@ public:
 	static Scene* createScene();
 
 	virtual bool init();
-	
+
+	int score;										// 점수
+	int money;										// 획득한 물방울
+	int fullHP;										// 원래 체력
+	int health;										// 체력
+	bool collided;									// 충돌 중인지 체크
+	bool paused;									// 게임이 멈췄는지 체크
+	bool end;										// 게임이 끝났는지 체크
+	float objectMoveTime;							// 오브젝트들 이동시간
+	Fruit* fruit;									// 과일
+	Waterdrop* waterdrop;							// 물방울
+	unordered_map<string, Obstacle*> obstacleMap;	// 장애물
+	Board* board1;									// 나무판자1
+	Board* board2;									// 나무판자2
+	GameSceneUI* UI;								// 게임씬 UI
+	EventListenerTouchOneByOne* listener;			// 터치 리스너
+	EventListenerKeyboard* keyListener;				// 키보드 리스너
+
 	void Tick(float f);								// 한 프레임마다 호출
 	void MakeBackground();							// 배경 생성
 	void MakeUI();									// UI 생성

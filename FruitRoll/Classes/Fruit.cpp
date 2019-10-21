@@ -1,12 +1,13 @@
 ﻿#include "Fruit.h"
 
 
-Fruit::Fruit(string type)
+Fruit::Fruit(string type, float moveTime)
 {
 	fruitType = type;
 	MakeSprite();
 	jumping = false;
 	stopping = false;
+	this->moveTime = moveTime;
 }
 
 Fruit::~Fruit()
@@ -53,7 +54,7 @@ void Fruit::MakeSprite() {
 
 void Fruit::Jump() {
 	jumping = true;
-	auto jumpAction = JumpTo::create(1, fruitImage->getPosition(), height * 3, 1);
+	auto jumpAction = JumpTo::create(moveTime, fruitImage->getPosition(), height * 3, 1);
 	auto callback = CallFunc::create(CC_CALLBACK_0(Fruit::JumpEnd, this));
 	auto seq = Sequence::create(jumpAction, callback, NULL);
 	fruitImage->runAction(seq);
@@ -62,7 +63,7 @@ void Fruit::Jump() {
 
 void Fruit::JumpEnd() {
 	jumping = false;
-	StopEnd();
+	StopEnd(moveTime);
 }
 
 void Fruit::Stop() {
@@ -70,13 +71,14 @@ void Fruit::Stop() {
 	fruitImage->stopActionByTag(0);
 }
 
-void Fruit::StopEnd() {
+void Fruit::StopEnd(float moveTime) {
 	stopping = false;    
+	this->moveTime = moveTime;
 	Rotate();
 }
 
 void Fruit::Rotate() {
-	auto rotateAction = RotateBy::create(1, 540);
+	auto rotateAction = RotateBy::create(moveTime, 540);
 	auto repeatRotate = RepeatForever::create(rotateAction);
 	repeatRotate->setTag(0);
 	fruitImage->runAction(repeatRotate);

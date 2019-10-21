@@ -21,7 +21,7 @@ Obstacle::~Obstacle()
 
 void Obstacle::Move() {
 	moving = true;
-	auto action = MoveBy::create(1, Point(-visibleSize.width / 1.6, 0));
+	auto action = MoveBy::create(moveTime, Point(-visibleSize.width / 1.6, 0));
 	auto rf = RepeatForever::create(action);
 	rf->setTag(0);
 	obstacleImage->runAction(rf);
@@ -43,15 +43,15 @@ void Obstacle::Stop() {
 	stopping = true;
 }
 
-void Obstacle::StopEnd() {
+void Obstacle::StopEnd(float moveTime) {
 	stopping = false;
+	this->moveTime = moveTime;
 	Move();
-	
 }
 
 void Obstacle::Fall() {
 	auto action = MoveBy::create(0.25, Point(0, -visibleSize.height * 0.4));
-	auto seq = Sequence::create(DelayTime::create(1.3), action, CallFunc::create(CC_CALLBACK_0(Obstacle::PlayEffect, this)), NULL);
+	auto seq = Sequence::create(DelayTime::create(moveTime * 1.3), action, CallFunc::create(CC_CALLBACK_0(Obstacle::PlayEffect, this)), NULL);
 	seq->setTag(1);
 	obstacleImage->runAction(seq);
 }

@@ -28,6 +28,16 @@ public:
 	string clickedButton;
 	Sprite* restartButton;
 	Sprite* goMainButton;
-
 	ui::Text* scoreText;
+
+	virtual void onEnter();
+	virtual bool onTouchBegan(Touch* touch, Event* unused_event);
+	virtual void onTouchMoved(Touch* touch, Event* unused_event);
+	virtual void onTouchEnded(Touch* touch, Event *unused_event);
+
+
+	void MakePopUp();
+	void OnClickRestart();
+	void OnClickGoMain();
+	void GetInfo(int score);
 };

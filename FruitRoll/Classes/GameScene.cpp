@@ -19,6 +19,7 @@ bool GameScene::init()
 	score = 0;
 	fullHP = health;
 	end = false;
+	objectMoveTime = 1.1f;
 
 	MakeFruit();
 	MakeBackground();
@@ -130,18 +131,15 @@ void GameScene::onTouchMoved(Touch* touch, Event* unused_event) {
 	
 	if (!UI->stopButton->getBoundingBox().containsPoint(touchPoint) && board1->stopping && !end) {
 		fruit->stopLable->setVisible(false);
-		
-        if(!fruit->jumping)
-            fruit->StopEnd();
-		board1->StopEnd();
-		board2->StopEnd();
-		
+		if (!fruit->jumping)
+			fruit->StopEnd(objectMoveTime);
+		board1->StopEnd(objectMoveTime);
+		board2->StopEnd(objectMoveTime);
 		if (waterdrop->moving)
-			waterdrop->StopEnd();
-		
+			waterdrop->StopEnd(objectMoveTime);
 		for (pair<string, Obstacle*> o : obstacleMap) {
 			if (o.second->moving)
-				o.second->StopEnd();
+				o.second->StopEnd(objectMoveTime);
 		}
 		UI->stopButton->setOpacity(255);
 	}
@@ -152,18 +150,15 @@ void GameScene::onTouchEnded(Touch* touch, Event *unused_event) {
 	
 	if (board1->stopping && !end) {
 		fruit->stopLable->setVisible(false);
-		
-		if(!fruit->jumping)
-			fruit->StopEnd();
-		
-		board1->StopEnd();
-		board2->StopEnd();
-		
+		if (!fruit->jumping)
+			fruit->StopEnd(objectMoveTime);
+		board1->StopEnd(objectMoveTime);
+		board2->StopEnd(objectMoveTime);
 		if (waterdrop->moving)
-			waterdrop->StopEnd();
+			waterdrop->StopEnd(objectMoveTime);
 		for (pair<string, Obstacle*> o : obstacleMap) {
 			if (o.second->moving)
-				o.second->StopEnd();
+				o.second->StopEnd(objectMoveTime);
 		}
 	}
 	
@@ -183,12 +178,12 @@ void GameScene::MakeBackground() {
 	srand(time(NULL));
 	int n = rand() % 2;
 	switch (n) {
-		case 0:
-			type = "FridgeStage";
-			break;
-		case 1:
-			type = "KitchenStage";
-			break;
+	case 0:
+		type = "FridgeStage";
+		break;
+	case 1:
+		type = "KitchenStage";
+		break;
 	}
 	
 	auto backgroundImage = Sprite::create("images/" + type + ".png");
@@ -216,7 +211,7 @@ void GameScene::MakeUI() {
 // 과일 생성
 void GameScene::MakeFruit() {
 	string fruitType = UserDefault::getInstance()->getStringForKey("selectedFruit");
-	fruit = new Fruit(fruitType);
+	fruit = new Fruit(fruitType, objectMoveTime);
 	this->addChild(fruit->fruitImage, 10);
 	this->addChild(fruit->stopLable, 10);
 	fruit->Rotate();
@@ -235,8 +230,8 @@ void GameScene::MakeObject() {
 	this->addChild(obstacleMap["Fork"]->obstacleImage, 5);
 	this->addChild(obstacleMap["Knife"]->obstacleImage, 5);
 
-	board1 = new Board();
-	board2 = new Board();
+	board1 = new Board(objectMoveTime);
+	board2 = new Board(objectMoveTime);
 	board1->boardImage->setPositionX(board1->width * 0.5);
 	this->addChild(board1->boardImage, 1);
 	this->addChild(board2->boardImage, 1);
@@ -248,25 +243,25 @@ void GameScene::MoveObject() {
 	
 	switch (r)
 	{
-		case 0:
-			waterdrop->StopEnd();
-			break;
-		case 1:
-			obstacleMap["Bottle"]->StopEnd();
-			break;
-		case 2:
-			obstacleMap["Coke"]->StopEnd();
-			break;
-		case 3:
-			obstacleMap["Fork"]->StopEnd();
-			obstacleMap["Fork"]->Fall();
-			break;
-		case 4:
-			obstacleMap["Knife"]->StopEnd();
-			obstacleMap["Knife"]->Fall();
-			break;
-		default:
-			break;
+	case 0:
+		waterdrop->StopEnd(objectMoveTime);
+		break;
+	case 1:
+		obstacleMap["Bottle"]->StopEnd(objectMoveTime);
+		break;
+	case 2:
+		obstacleMap["Coke"]->StopEnd(objectMoveTime);
+		break;
+	case 3:
+		obstacleMap["Fork"]->StopEnd(objectMoveTime);
+		obstacleMap["Fork"]->Fall();
+		break;
+	case 4:
+		obstacleMap["Knife"]->StopEnd(objectMoveTime);
+		obstacleMap["Knife"]->Fall();
+		break;
+	default:
+		break;
 	}
 }
 
@@ -304,8 +299,9 @@ void GameScene::CheckCollide() {
 		waterdrop->Stop();
 		MoveObject();
 		score++;
-		if(fullHP>health)
-		    health++;
+		objectMoveTime -= 0.02f;
+		if (fullHP > health)
+			health++;
 		UI->UpdateInfo((health * 100) / fullHP, score);
 	}
 
@@ -314,7 +310,7 @@ void GameScene::CheckCollide() {
 			auto obstacleBoundingbox = obstacle.second->obstacleImage->getBoundingBox();
 
 			if (obstacleBoundingbox.intersectsCircle(fruit->fruitImage->getPosition(), fruit->fruitRadius) && !collided) {
-				health-=10;
+				health -= 10;
 				fruit->PlayAnimation();
 				collided = true;
 				UI->UpdateInfo((health * 100) / fullHP, score);
@@ -352,14 +348,14 @@ void GameScene::Restart() {
 void GameScene::GameOver() {
 	if (board1->stopping) {
 		fruit->stopLable->setVisible(false);
-		fruit->StopEnd();
-		board1->StopEnd();
-		board2->StopEnd();
+		fruit->StopEnd(objectMoveTime);
+		board1->StopEnd(objectMoveTime);
+		board2->StopEnd(objectMoveTime);
 		if (waterdrop->moving)
-			waterdrop->StopEnd();
+			waterdrop->StopEnd(objectMoveTime);
 		for (pair<string, Obstacle*> o : obstacleMap) {
 			if (o.second->moving)
-				o.second->StopEnd();
+				o.second->StopEnd(objectMoveTime);
 		}
 	}
 	experimental::AudioEngine::pauseAll();

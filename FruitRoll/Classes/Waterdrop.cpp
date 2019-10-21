@@ -17,7 +17,7 @@ Waterdrop::~Waterdrop()
 }
 
 void Waterdrop::Move() {
-	auto action = MoveBy::create(1, Point(-visibleSize.width / 1.6, 0));
+	auto action = MoveBy::create(moveTime, Point(-visibleSize.width / 1.6, 0));
 	auto rf = RepeatForever::create(action);
 	rf->setTag(0);
 	waterdropImage->runAction(rf);
@@ -36,8 +36,9 @@ void Waterdrop::Stop() {
 	stopping = true;
 }
 
-void Waterdrop::StopEnd() {
+void Waterdrop::StopEnd(float moveTime) {
 	stopping = false;
+	this->moveTime = moveTime;
 	Move();
 }
 

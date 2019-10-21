@@ -16,7 +16,7 @@ public:
 	string clickedButton;
 	Sprite* resumeButton;					
 	Sprite* restartButton;					
-	Sprite* goMainButton;		
+	Sprite* goMainButton;
 
     virtual void onEnter();
 	virtual bool onTouchBegan(Touch* touch, Event* unused_event);
